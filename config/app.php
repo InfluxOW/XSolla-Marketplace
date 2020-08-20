@@ -229,4 +229,8 @@ return [
 
     ],
 
+    'marketplace' => [
+        'commission' => 0.05,
+    ]
+
 ];
