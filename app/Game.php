@@ -2,11 +2,13 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Game extends Model
 {
     protected $fillable = ['name', 'description', 'price'];
+    protected $appends = ['isAvailable'];
 
     public function keys()
     {
@@ -16,5 +18,20 @@ class Game extends Model
     public function sales()
     {
         return $this->hasManyThrough(Purchase::class, Key::class);
+    }
+
+    public function scopeAvailable(Builder $query)
+    {
+        return $query->whereHas('keys', fn(Builder $query) => $query->whereDoesntHave('purchase'));
+    }
+
+    public function getIsAvailableAttribute()
+    {
+        return $this->isAvailable();
+    }
+
+    public function isAvailable()
+    {
+        return $this->keys->filter->isAvailable()->count() > 0;
     }
 }

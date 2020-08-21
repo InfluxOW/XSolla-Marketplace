@@ -36,4 +36,28 @@ class GameTest extends TestCase
         $this->assertInstanceOf(Purchase::class, $this->game->sales->first());
         $this->assertTrue($this->game->sales->contains($purchase));
     }
+
+    /** @test */
+    public function it_can_be_scoped_to_only_available_for_purchase_games()
+    {
+        $availableGame = $this->game;
+        $availableKey = factory(Key::class)->state('test')->create(['game_id' => $availableGame]);
+
+        $unavailableGame = factory(Game::class)->create();
+        $unavailableKey = factory(Key::class)->state('test')->create(['game_id' => $unavailableGame]);
+        $purchase = factory(Purchase::class)->state('test')->create(['key_id' => $unavailableKey]);
+
+        $this->assertTrue(Game::available()->get()->contains($availableGame));
+        $this->assertFalse(Game::available()->get()->contains($unavailableGame));
+    }
+
+    /** @test */
+    public function it_knows_if_it_is_available_for_sale()
+    {
+        $this->assertFalse($this->game->isAvailable());
+
+        factory(Key::class)->state('test')->create(['game_id' => $this->game]);
+
+        $this->assertTrue($this->game->fresh()->isAvailable());
+    }
 }

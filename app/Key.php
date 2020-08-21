@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Key extends Model
 {
     protected $fillable = ['serial_number'];
+    protected $appends = ['isAvailable'];
 
     public function game()
     {
@@ -32,6 +33,11 @@ class Key extends Model
     public function scopeAvailable(Builder $query)
     {
         return $query->whereDoesntHave('purchase');
+    }
+
+    public function getIsAvailableAttribute()
+    {
+        return $this->isAvailable();
     }
 
     public function isAvailable()
