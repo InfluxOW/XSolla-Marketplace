@@ -12,10 +12,11 @@ class RegisterController extends Controller
     {
         $validatedData = $request->validated();
         $validatedData['password'] = bcrypt($request->password);
+        $validatedData['email_verified_at'] = now();
         $user = User::create($validatedData);
 
         $accessToken = $user->createToken('access_token')->accessToken;
 
-        return response([ 'user' => $user, 'access_token' => $accessToken]);
+        return response(['user' => $user, 'access_token' => $accessToken]);
     }
 }
