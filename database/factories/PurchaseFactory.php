@@ -21,3 +21,10 @@ $factory->afterMaking(Purchase::class, function (Purchase $purchase) {
     $purchase->buyer()->associate($buyer);
     $purchase->save();
 });
+
+$factory->state(Purchase::class, 'test', function (Faker $faker) {
+    return [
+        'key_id' => factory(Key::class)->state('test'),
+        'buyer_id' => factory(User::class)->state('buyer'),
+    ];
+});

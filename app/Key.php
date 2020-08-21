@@ -19,9 +19,9 @@ class Key extends Model
         return $this->belongsTo(Distributor::class);
     }
 
-    public function seller()
+    public function owner()
     {
-        return $this->belongsTo(User::class, 'seller_id');
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
     public function purchase()
@@ -36,6 +36,6 @@ class Key extends Model
 
     public function isAvailable()
     {
-        return Purchase::where('key_id', $this->id)->exists();
+        return Purchase::where('key_id', $this->id)->doesntExist();
     }
 }

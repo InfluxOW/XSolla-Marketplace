@@ -56,7 +56,7 @@ class User extends Authenticatable
 
     public function sales()
     {
-        return $this->hasManyThrough(Purchase::class, Key::class,'seller_id');
+        return $this->hasManyThrough(Purchase::class, Key::class, 'owner_id');
     }
 
     /*
@@ -76,5 +76,13 @@ class User extends Authenticatable
     public function purchases()
     {
         return $this->hasMany(Purchase::class, 'buyer_id');
+    }
+
+    public function purchase(Key $key)
+    {
+        return tap($this->purchases()->make(), function ($purchase) use ($key) {
+            $purchase->key()->associate($key);
+            $purchase->save();
+        });
     }
 }

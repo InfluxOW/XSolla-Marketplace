@@ -17,10 +17,18 @@ $factory->define(Key::class, function (Faker $faker) {
 $factory->afterMaking(Key::class, function (Key $key) {
     $game = Game::inRandomOrder()->take(1)->first();
     $distributionService = Distributor::inRandomOrder()->take(1)->first();
-    $seller = User::seller()->inRandomOrder()->take(1)->first();
+    $owner = User::seller()->inRandomOrder()->take(1)->first();
 
     $key->game()->associate($game);
     $key->distributor()->associate($distributionService);
-    $key->seller()->associate($seller);
+    $key->owner()->associate($owner);
     $key->save();
+});
+
+$factory->state(Key::class, 'test', function (Faker $faker) {
+    return [
+        'game_id' => factory(Game::class),
+        'distributor_id' => factory(Distributor::class),
+        'owner_id' => factory(User::class)->state('seller'),
+    ];
 });

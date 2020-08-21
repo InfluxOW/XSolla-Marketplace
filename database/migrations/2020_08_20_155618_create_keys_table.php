@@ -17,9 +17,9 @@ class CreateKeysTable extends Migration
             $table->id();
             $table->foreignId('game_id')->index()->constrained()->cascadeOnDelete();
             $table->foreignId('distributor_id')->index()->constrained()->cascadeOnDelete();
-            $table->foreignId('seller_id')->index()->constrained('users')->cascadeOnDelete();
+            $table->foreignId('owner_id')->index()->constrained('users')->cascadeOnDelete();
             $table->string('serial_number');
-            $table->unique(['distributor_id', 'seller_id', 'serial_number']);
+            $table->unique(['distributor_id', 'owner_id', 'serial_number']);
             $table->timestamps();
         });
     }
