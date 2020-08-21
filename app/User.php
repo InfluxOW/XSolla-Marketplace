@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Events\PurchaseCreated;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -83,6 +84,8 @@ class User extends Authenticatable
         return tap($this->purchases()->make(), function ($purchase) use ($key) {
             $purchase->key()->associate($key);
             $purchase->save();
+
+            PurchaseCreated::dispatch($purchase);
         });
     }
 }

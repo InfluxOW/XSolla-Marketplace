@@ -34,4 +34,10 @@ class Game extends Model
     {
         return $this->keys->filter->isAvailable()->count() > 0;
     }
+
+    public function priceIncludingCommission()
+    {
+        $commission = config('app.marketplace.commission');
+        return $this->price * (1 - $commission);
+    }
 }

@@ -2,9 +2,11 @@
 
 namespace Tests\Unit;
 
+use App\Events\PurchaseCreated;
 use App\Key;
 use App\Purchase;
 use App\User;
+use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class UserTest extends TestCase
@@ -67,5 +69,27 @@ class UserTest extends TestCase
         $this->assertTrue($key->isAvailable());
         $this->buyer->purchase($key);
         $this->assertFalse($key->isAvailable());
+    }
+
+    /** @test */
+    public function purchasing_a_key_fires_an_event()
+    {
+        $key = factory(Key::class)->state('test')->create();
+        $buyer = factory(User::class)->state('buyer')->create();
+
+        Event::fake();
+        $buyer->purchase($key);
+        Event::assertDispatched(PurchaseCreated::class);
+    }
+
+    /** @test */
+    public function purchasing_a_key_increases_seller_balance()
+    {
+        $key = factory(Key::class)->state('test')->create();
+        $buyer = factory(User::class)->state('buyer')->create();
+
+        $this->assertEquals(0, $key->owner->balance);
+        $buyer->purchase($key);
+        $this->assertEquals($key->game->priceIncludingCommission(), $key->owner->balance);
     }
 }
