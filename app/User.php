@@ -56,7 +56,7 @@ class User extends Authenticatable
 
     public function sales()
     {
-        return $this->hasManyThrough(Purchase::class, Product::class,'seller_id');
+        return $this->hasManyThrough(Purchase::class, Key::class,'seller_id');
     }
 
     /*

@@ -13,4 +13,9 @@ class Distributor extends Model
     {
         return $this->hasMany(Key::class);
     }
+
+    public function games()
+    {
+        return $this->hasManyThrough(Game::class, Key::class, 'distributor_id', 'id', null, 'game_id');
+    }
 }
