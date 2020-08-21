@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Key extends Model
 {
     protected $fillable = ['serial_number'];
-    public $timestamps = false;
 
     public function game()
     {
@@ -20,14 +19,19 @@ class Key extends Model
         return $this->belongsTo(Distributor::class);
     }
 
-    public function product()
+    public function seller()
     {
-        return $this->hasOne(Product::class);
+        return $this->belongsTo(User::class, 'seller_id');
+    }
+
+    public function purchase()
+    {
+        return $this->hasOne(Purchase::class);
     }
 
     public function scopeAvailable(Builder $query)
     {
-        return $query->whereDoesntHave('product');
+        return $query->whereDoesntHave('purchase');
     }
 
     public function isAvailable()

@@ -19,7 +19,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'username', 'email', 'password', 'role'
     ];
 
     /**
@@ -40,10 +40,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function products()
-    {
-        return $this->hasMany(Product::class, 'seller_id');
-    }
+    /*
+     * For sellers
+     * */
 
     public function isSeller()
     {
@@ -59,6 +58,10 @@ class User extends Authenticatable
     {
         return $this->hasManyThrough(Purchase::class, Product::class,'seller_id');
     }
+
+    /*
+     * For buyers
+     * */
 
     public function isBuyer()
     {

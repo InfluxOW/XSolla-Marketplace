@@ -5,6 +5,7 @@
 use App\Key;
 use App\Game;
 use App\Distributor;
+use App\User;
 use Faker\Generator as Faker;
 
 $factory->define(Key::class, function (Faker $faker) {
@@ -16,8 +17,10 @@ $factory->define(Key::class, function (Faker $faker) {
 $factory->afterMaking(Key::class, function (Key $key) {
     $game = Game::inRandomOrder()->take(1)->first();
     $distributionService = Distributor::inRandomOrder()->take(1)->first();
+    $seller = User::seller()->inRandomOrder()->take(1)->first();
 
     $key->game()->associate($game);
     $key->distributor()->associate($distributionService);
+    $key->seller()->associate($seller);
     $key->save();
 });

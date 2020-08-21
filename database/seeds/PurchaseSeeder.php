@@ -1,8 +1,6 @@
 <?php /** @noinspection StaticInvocationViaThisInspection */
 
-use App\Product;
 use App\Purchase;
-use App\User;
 use Illuminate\Database\Seeder;
 
 class PurchaseSeeder extends Seeder

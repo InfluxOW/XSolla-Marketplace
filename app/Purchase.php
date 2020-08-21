@@ -14,8 +14,8 @@ class Purchase extends Model
         return $this->belongsTo(User::class, 'buyer_id');
     }
 
-    public function product()
+    public function key()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Key::class);
     }
 }

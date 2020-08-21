@@ -15,9 +15,9 @@ class CreatePurchasesTable extends Migration
     {
         Schema::create('purchases', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->index()->constrained()->cascadeOnDelete();
+            $table->foreignId('key_id')->index()->constrained()->cascadeOnDelete();
             $table->foreignId('buyer_id')->index()->constrained('users')->cascadeOnDelete();
-            $table->unique(['product_id', 'buyer_id']);
+            $table->unique(['key_id', 'buyer_id']);
             $table->timestamp('made_at')->nullable();
         });
     }

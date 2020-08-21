@@ -2,7 +2,7 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Product;
+use App\Key;
 use App\Purchase;
 use App\User;
 use Faker\Generator as Faker;
@@ -14,10 +14,10 @@ $factory->define(Purchase::class, function (Faker $faker) {
 });
 
 $factory->afterMaking(Purchase::class, function (Purchase $purchase) {
-    $product = Product::available()->inRandomOrder()->take(1)->first();
+    $key = Key::available()->inRandomOrder()->take(1)->first();
     $buyer = User::buyer()->inRandomOrder()->take(1)->first();
 
-    $purchase->product()->associate($product);
+    $purchase->key()->associate($key);
     $purchase->buyer()->associate($buyer);
     $purchase->save();
 });

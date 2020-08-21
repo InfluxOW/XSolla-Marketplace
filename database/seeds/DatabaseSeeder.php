@@ -16,7 +16,6 @@ class DatabaseSeeder extends Seeder
              GameSeeder::class,
              DistributorSeeder::class,
              KeySeeder::class,
-             ProductSeeder::class,
              PurchaseSeeder::class,
          ]);
     }
