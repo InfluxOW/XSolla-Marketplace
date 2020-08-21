@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
@@ -38,4 +39,39 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'seller_id');
+    }
+
+    public function isSeller()
+    {
+        return $this->role === 'seller';
+    }
+
+    public function scopeSeller(Builder $query)
+    {
+        $query->where('role', 'seller');
+    }
+
+    public function sales()
+    {
+        return $this->hasManyThrough(Purchase::class, Product::class,'seller_id');
+    }
+
+    public function isBuyer()
+    {
+        return $this->role === 'buyer';
+    }
+
+    public function scopeBuyer(Builder $query)
+    {
+        $query->where('role', 'buyer');
+    }
+
+    public function purchases()
+    {
+        return $this->hasMany(Purchase::class, 'buyer_id');
+    }
 }
