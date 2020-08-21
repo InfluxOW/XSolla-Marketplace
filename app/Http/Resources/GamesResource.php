@@ -12,6 +12,7 @@ class GamesResource extends JsonResource
             'name' => $this->name,
             'description' => $this->when(! is_null($this->description), $this->description),
             'price' => $this->price,
+            'link' => route('games.show', ['game' => $this]),
             'keys_count' => $this->getKeysCountGroupedByDistributor(),
         ];
     }

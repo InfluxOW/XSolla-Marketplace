@@ -18,4 +18,4 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', 'API\Auth\LoginController@login')->name('login');
 Route::post('register', 'API\Auth\RegisterController@register')->name('register');
 /* Games */
-Route::apiResource('games', 'API\GamesController');
+Route::apiResource('games', 'API\GamesController')->only('index', 'store', 'show')->parameters(['games' => 'game:slug']);
