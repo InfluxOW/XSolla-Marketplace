@@ -17,3 +17,5 @@ use Illuminate\Support\Facades\Route;
 /* Auth */
 Route::post('login', 'API\Auth\LoginController@login')->name('login');
 Route::post('register', 'API\Auth\RegisterController@register')->name('register');
+/* Games */
+Route::apiResource('games', 'API\GamesController');

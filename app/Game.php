@@ -9,6 +9,7 @@ class Game extends Model
 {
     protected $fillable = ['name', 'description', 'price'];
     protected $appends = ['isAvailable'];
+    protected $with = ['keys'];
 
     public function keys()
     {
