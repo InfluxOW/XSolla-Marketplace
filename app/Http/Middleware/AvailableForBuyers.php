@@ -20,6 +20,6 @@ class AvailableForBuyers
             return $next($request);
         }
 
-        return response("You don't have permission to access this endpoint! Use your seller account instead.", 403);
+        return response("You don't have permission to access this endpoint! Use your buyer account instead.", 403);
     }
 }

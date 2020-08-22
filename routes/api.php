@@ -21,3 +21,7 @@ Route::post('register', 'API\Auth\RegisterController@register')->name('register'
 Route::apiResource('games', 'API\GamesController')->only('index', 'store', 'show')->parameters(['games' => 'game:slug']);
 /* Distributors */
 Route::apiResource('distributors', 'API\DistributorsController')->only('index', 'show')->parameters(['distributors' => 'distributor:slug']);
+/* Purchases */
+Route::post('games/{game:slug}/purchase', 'API\PurchasesController@store')->name('purchases.store');
+/* Sales */
+Route::post('games/{game:slug}/sell', 'API\SalesController@store')->name('sales.store');

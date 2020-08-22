@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Distributor;
 use App\Game;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GamesRequest;
@@ -16,9 +15,8 @@ class GamesController extends Controller
         $this->middleware(['auth:api', 'seller'])->only('store');
     }
 
-    public function index(Request $request, Distributor $distributor)
+    public function index(Request $request)
     {
-        $query = empty($distributor->getAttributes()) ? Game::query() : $distributor->games();
         $games = Game::with('keys.distributor')->paginate(20);
 
         return GamesResource::collection($games);
