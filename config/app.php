@@ -230,7 +230,7 @@ return [
     ],
 
     'marketplace' => [
-        'commission' => 0.05,
+        'commission' => env('MARKETPLACE_COMMISSION', 0.05),
     ]
 
 ];

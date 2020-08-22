@@ -14,12 +14,14 @@ $factory->define(Purchase::class, function (Faker $faker) {
 });
 
 $factory->afterMaking(Purchase::class, function (Purchase $purchase) {
-    $key = Key::available()->inRandomOrder()->take(1)->first();
-    $buyer = User::buyer()->inRandomOrder()->take(1)->first();
+    if (app('env') === 'local') {
+        $key = Key::available()->inRandomOrder()->take(1)->first();
+        $buyer = User::buyer()->inRandomOrder()->take(1)->first();
 
-    $purchase->key()->associate($key);
-    $purchase->buyer()->associate($buyer);
-    $purchase->save();
+        $purchase->key()->associate($key);
+        $purchase->buyer()->associate($buyer);
+        $purchase->save();
+    }
 });
 
 $factory->state(Purchase::class, 'test', function (Faker $faker) {

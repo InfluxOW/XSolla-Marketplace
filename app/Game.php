@@ -19,6 +19,11 @@ class Game extends Model
         return $this->hasMany(Key::class);
     }
 
+    public function keysAtDistributor(Distributor $distributor)
+    {
+        return $this->keys->where('distributor_id', $distributor->id);
+    }
+
     public function sales()
     {
         return $this->hasManyThrough(Purchase::class, Key::class);

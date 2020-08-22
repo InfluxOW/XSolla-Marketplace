@@ -15,14 +15,16 @@ $factory->define(Key::class, function (Faker $faker) {
 });
 
 $factory->afterMaking(Key::class, function (Key $key) {
-    $game = Game::inRandomOrder()->take(1)->first();
-    $distributionService = Distributor::inRandomOrder()->take(1)->first();
-    $owner = User::seller()->inRandomOrder()->take(1)->first();
+    if (app('env') === 'local') {
+        $game = Game::inRandomOrder()->take(1)->first();
+        $distributionService = Distributor::inRandomOrder()->take(1)->first();
+        $owner = User::seller()->inRandomOrder()->take(1)->first();
 
-    $key->game()->associate($game);
-    $key->distributor()->associate($distributionService);
-    $key->owner()->associate($owner);
-    $key->save();
+        $key->game()->associate($game);
+        $key->distributor()->associate($distributionService);
+        $key->owner()->associate($owner);
+        $key->save();
+    }
 });
 
 $factory->state(Key::class, 'test', function (Faker $faker) {

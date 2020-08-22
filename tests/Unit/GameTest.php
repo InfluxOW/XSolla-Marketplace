@@ -2,9 +2,11 @@
 
 namespace Tests\Unit;
 
+use App\Distributor;
 use App\Game;
 use App\Key;
 use App\Purchase;
+use App\User;
 use Tests\TestCase;
 
 class GameTest extends TestCase
@@ -25,6 +27,21 @@ class GameTest extends TestCase
 
         $this->assertInstanceOf(Key::class, $this->game->keys->first());
         $this->assertTrue($this->game->keys->contains($key));
+    }
+
+    /** @test */
+    public function it_has_keys_at_specific_distributor()
+    {
+        $steam = factory(Distributor::class)->state('steam')->create();
+        $gog = factory(Distributor::class)->state('gog')->create();
+
+        $keyAtSteam = factory(Key::class)->state('test')->create(['game_id' => $this->game, 'distributor_id' => $steam]);
+        $keyAtGog = factory(Key::class)->state('test')->create(['game_id' => $this->game, 'distributor_id' => $gog]);
+
+        $this->assertTrue($this->game->keysAtDistributor($steam)->contains($keyAtSteam));
+        $this->assertFalse($this->game->keysAtDistributor($steam)->contains($keyAtGog));
+        $this->assertTrue($this->game->keysAtDistributor($gog)->contains($keyAtGog));
+        $this->assertFalse($this->game->keysAtDistributor($gog)->contains($keyAtSteam));
     }
 
     /** @test */

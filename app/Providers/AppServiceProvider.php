@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use App\Distributor;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -15,11 +13,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('distributors', function () {
-            return Cache::rememberForever('distributors', function () {
-                return Distributor::all();
-            });
-        });
+        //
     }
 
     /**
