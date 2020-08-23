@@ -11,14 +11,14 @@ class DistributorsController extends Controller
 {
     public function index()
     {
-        $distributors = Distributor::with('games')->get();
+        $distributors = Distributor::withCount('games')->get();
 
         return DistributorsResource::collection($distributors);
     }
 
     public function show(Distributor $distributor)
     {
-        $games = $distributor->games()->with('keys.distributor')->paginate(20);
+        $games = $distributor->games()->with('keys.distributor', 'platform')->paginate(20);
 
         return GamesResource::collection($games);
     }

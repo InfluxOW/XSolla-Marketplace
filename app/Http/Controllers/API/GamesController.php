@@ -17,7 +17,7 @@ class GamesController extends Controller
 
     public function index(Request $request)
     {
-        $games = Game::with('keys.distributor')->paginate(20);
+        $games = Game::with('keys.distributor', 'platform')->paginate(20);
 
         return GamesResource::collection($games);
     }
@@ -31,6 +31,6 @@ class GamesController extends Controller
 
     public function show(Game $game)
     {
-        return new GamesResource($game->load('keys.distributor'));
+        return new GamesResource($game->load('keys.distributor', 'platform'));
     }
 }

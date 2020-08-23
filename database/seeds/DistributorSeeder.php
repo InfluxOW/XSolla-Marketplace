@@ -7,8 +7,8 @@ use Illuminate\Database\Seeder;
 class DistributorSeeder extends Seeder
 {
     protected $distributors = [
-        'PS4' => [
-            'Playstation Store'
+        'PlayStation 4' => [
+            'PlayStation Store'
         ],
         'Xbox One' => [
             'Microsoft Store'

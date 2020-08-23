@@ -11,6 +11,7 @@ class GamesResource extends JsonResource
         return [
             'name' => $this->name,
             'description' => $this->when(! is_null($this->description), $this->description),
+            'platform' => $this->whenLoaded('platform', $this->platform->name),
             'price' => $this->price,
             'link' => $this->when(! $request->is('api/games/*'), route('games.show', ['game' => $this])),
             'keys_count' => $this->getKeysCountGroupedByDistributor(),

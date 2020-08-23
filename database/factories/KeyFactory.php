@@ -26,7 +26,7 @@ $factory->state(Key::class, 'test', function (Faker $faker) {
 $factory->afterMaking(Key::class, function (Key $key) {
     if (app('env') === 'local') {
         $game = Game::inRandomOrder()->take(1)->first();
-        $distributionService = Distributor::inRandomOrder()->take(1)->first();
+        $distributionService = $game->platform->distributors->random();
         $owner = User::seller()->inRandomOrder()->take(1)->first();
 
         $key->game()->associate($game);
