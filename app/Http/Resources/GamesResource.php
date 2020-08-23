@@ -13,14 +13,14 @@ class GamesResource extends JsonResource
             'description' => $this->when(! is_null($this->description), $this->description),
             'platform' => $this->whenLoaded('platform', $this->platform->name),
             'price' => $this->price,
-            'link' => $this->when(! $request->is('api/games/*'), route('games.show', ['game' => $this])),
+            'link' => $this->when(! $request->is('api/games/*'), route('games.show', ['game' => $this->resource])),
             'keys_count' => $this->getKeysCountGroupedByDistributor(),
         ];
     }
 
     protected function getKeysCountGroupedByDistributor()
     {
-        return $this->whenLoaded('keys')
+        return $this->whenLoaded('availableKeys')
             ->groupBy(function ($item) {
                 return $item->distributor->name;
             })

@@ -11,6 +11,13 @@ class PurchaseTest extends TestCase
 {
     protected $purchase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->purchase = factory(Purchase::class)->state('test')->create();
+    }
+
     /** @test */
     public function it_belongs_to_a_key()
     {
@@ -27,12 +34,5 @@ class PurchaseTest extends TestCase
     public function it_belongs_to_a_seller()
     {
         $this->assertInstanceOf(User::class, $this->purchase->seller);
-    }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->purchase = factory(Purchase::class)->state('test')->create();
     }
 }

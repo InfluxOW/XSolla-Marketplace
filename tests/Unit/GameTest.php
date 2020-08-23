@@ -1,10 +1,11 @@
-<?php
+<?php /** @noinspection StaticInvocationViaThisInspection */
 
 namespace Tests\Unit;
 
 use App\Distributor;
 use App\Game;
 use App\Key;
+use App\Platform;
 use App\Purchase;
 use App\User;
 use Tests\TestCase;
@@ -18,6 +19,12 @@ class GameTest extends TestCase
         parent::setUp();
 
         $this->game = factory(Game::class)->state('test')->create();
+    }
+
+    /** @test */
+    public function it_belongs_to_a_platform()
+    {
+        $this->assertInstanceOf(Platform::class, $this->game->platform);
     }
 
     /** @test */
@@ -42,6 +49,16 @@ class GameTest extends TestCase
         $this->assertFalse($this->game->keysAtDistributor($steam)->contains($keyAtGog));
         $this->assertTrue($this->game->keysAtDistributor($gog)->contains($keyAtGog));
         $this->assertFalse($this->game->keysAtDistributor($gog)->contains($keyAtSteam));
+    }
+
+    /** @test */
+    public function it_has_distributors_through_its_keys()
+    {
+        $distributor = factory(Distributor::class)->state('test')->create();
+        $key = factory(Key::class)->state('test')->create(['game_id' => $this->game, 'distributor_id' => $distributor]);
+
+        $this->assertInstanceOf(Distributor::class, $this->game->distributors->first());
+        $this->assertTrue($this->game->distributors->contains($distributor));
     }
 
     /** @test */

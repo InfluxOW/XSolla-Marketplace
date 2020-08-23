@@ -10,7 +10,7 @@ class PlatformsResource extends JsonResource
     {
         return [
             'name' => $this->name,
-            'link' => route('games.index', ['filters[platform]' => $this->resource->slug]),
+            'link' => route('games.index', ['filter[platform]' => $this->resource->slug]),
             'distributors' => $this->whenLoaded('distributors', DistributorsResource::collection($this->distributors)),
         ];
     }

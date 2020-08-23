@@ -72,7 +72,7 @@ class UserTest extends TestCase
     }
 
     /** @test */
-    public function purchasing_a_key_fires_an_event()
+    public function purchasing_a_key_fires_purchase_created_event()
     {
         $key = factory(Key::class)->state('test')->create();
         $buyer = factory(User::class)->state('buyer')->create();

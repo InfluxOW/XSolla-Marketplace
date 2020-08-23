@@ -3,9 +3,6 @@
 namespace App;
 
 use Cviebrock\EloquentSluggable\Sluggable;
-use Spatie\QueryBuilder\AllowedFilter;
-use Spatie\QueryBuilder\AllowedSort;
-use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,11 +12,21 @@ class Game extends Model
 
     protected $fillable = ['name', 'description', 'price'];
     protected $appends = ['isAvailable'];
-    protected $with = ['keys'];
+    protected $with = ['availableKeys'];
+
+    public function platform()
+    {
+        return $this->belongsTo(Platform::class);
+    }
 
     public function keys()
     {
         return $this->hasMany(Key::class);
+    }
+
+    public function availableKeys()
+    {
+        return $this->hasMany(Key::class)->available();
     }
 
     public function keysAtDistributor(Distributor $distributor)
@@ -29,24 +36,19 @@ class Game extends Model
 
     public function distributors()
     {
-        return $this->hasManyThrough(Distributor::class, Key::class, null, 'id', 'id', 'distributor_id')
+        return $this->hasManyThrough(Distributor::class, Key::class, 'owner_id', 'id', 'id', 'distributor_id')
             ->join('games', 'games.id', '=', 'keys.game_id')
             ->distinct('name');
     }
 
-    public function platform()
+    public function priceIncludingCommission()
     {
-        return $this->belongsTo(Platform::class);
+        return $this->price * (1 - config('app.marketplace.commission'));
     }
 
     public function sales()
     {
         return $this->hasManyThrough(Purchase::class, Key::class);
-    }
-
-    public function scopeAvailable(Builder $query)
-    {
-        return $query->whereHas('keys', fn(Builder $query) => $query->whereDoesntHave('purchase'));
     }
 
     public function isAvailable()
@@ -59,39 +61,16 @@ class Game extends Model
         return $this->isAvailable();
     }
 
-    public function priceIncludingCommission()
+    public function scopeHasDistributorWithAvailableKeys(Builder $query, $distributor): Builder
     {
-        $commission = config('app.marketplace.commission');
-        return $this->price * (1 - $commission);
+        return $query->whereHas('distributors', function (Builder $query) use ($distributor) {
+            return $query->where('slug', $distributor)->whereHas('availableKeys');
+        });
     }
 
-    public function scopePriceLte(Builder $query, $price): Builder
+    public function scopeAvailable(Builder $query): Builder
     {
-        return $query->where('price', '<=', $price);
-    }
-
-    public function scopePriceGte(Builder $query, $price): Builder
-    {
-        return $query->where('price', '>=', $price);
-    }
-
-    public static function index()
-    {
-        $query = QueryBuilder::for(self::class)
-            ->allowedFilters([
-                AllowedFilter::exact('platform', 'platform.slug'),
-                AllowedFilter::exact('distributor', 'distributors.slug'),
-                AllowedFilter::scope('price_lte'),
-                AllowedFilter::scope('costs_gte'),
-            ])
-            ->allowedSorts([
-                AllowedSort::field('platform', 'platform_id'),
-                AllowedSort::field('price'),
-                AllowedSort::field('name'),
-            ])
-            ->latest();
-
-        return $query->with('keys.distributor', 'platform')->paginate(20)->appends(request()->query());
+        return $query->whereHas('keys', fn(Builder $query) => $query->whereDoesntHave('purchase'));
     }
 
     public function sluggable(): array

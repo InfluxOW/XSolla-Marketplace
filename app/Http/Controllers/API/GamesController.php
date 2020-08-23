@@ -6,6 +6,7 @@ use App\Game;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GamesRequest;
 use App\Http\Resources\GamesResource;
+use App\Repositories\GameRepository;
 use Illuminate\Http\Request;
 
 class GamesController extends Controller
@@ -17,7 +18,7 @@ class GamesController extends Controller
 
     public function index(Request $request)
     {
-        $games = Game::get();
+        $games = GameRepository::getGamesForIndexPage();
 
         return GamesResource::collection($games);
     }
