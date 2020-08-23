@@ -3,6 +3,7 @@
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use App\Distributor;
+use App\Platform;
 use Faker\Generator as Faker;
 
 $factory->define(Distributor::class, function (Faker $faker) {
@@ -11,26 +12,8 @@ $factory->define(Distributor::class, function (Faker $faker) {
     ];
 });
 
-$factory->state(Distributor::class, 'steam', function() {
+$factory->state(Distributor::class, 'test', function (Faker $faker) {
     return [
-        'name' => 'Steam',
-    ];
-});
-
-$factory->state(Distributor::class, 'gog', function() {
-    return [
-        'name' => 'GOG',
-    ];
-});
-
-$factory->state(Distributor::class, 'ps store', function() {
-    return [
-        'name' => 'Playstation Store',
-    ];
-});
-
-$factory->state(Distributor::class, 'egs', function() {
-    return [
-        'name' => 'Epic Games Store',
+        'platform_id' => factory(Platform::class),
     ];
 });

@@ -15,7 +15,7 @@ class DistributorTest extends TestCase
     {
         parent::setUp();
 
-        $this->distributor = factory(Distributor::class)->create();
+        $this->distributor = factory(Distributor::class)->state('test')->create();
     }
 
     /** @test */

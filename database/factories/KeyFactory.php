@@ -14,6 +14,15 @@ $factory->define(Key::class, function (Faker $faker) {
     ];
 });
 
+
+$factory->state(Key::class, 'test', function (Faker $faker) {
+    return [
+        'game_id' => factory(Game::class)->state('test'),
+        'distributor_id' => factory(Distributor::class),
+        'owner_id' => factory(User::class)->state('seller'),
+    ];
+});
+
 $factory->afterMaking(Key::class, function (Key $key) {
     if (app('env') === 'local') {
         $game = Game::inRandomOrder()->take(1)->first();
@@ -25,12 +34,4 @@ $factory->afterMaking(Key::class, function (Key $key) {
         $key->owner()->associate($owner);
         $key->save();
     }
-});
-
-$factory->state(Key::class, 'test', function (Faker $faker) {
-    return [
-        'game_id' => factory(Game::class),
-        'distributor_id' => factory(Distributor::class),
-        'owner_id' => factory(User::class)->state('seller'),
-    ];
 });

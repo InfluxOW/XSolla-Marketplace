@@ -13,6 +13,13 @@ $factory->define(Purchase::class, function (Faker $faker) {
     ];
 });
 
+$factory->state(Purchase::class, 'test', function (Faker $faker) {
+    return [
+        'key_id' => factory(Key::class)->state('test'),
+        'buyer_id' => factory(User::class)->state('buyer'),
+    ];
+});
+
 $factory->afterMaking(Purchase::class, function (Purchase $purchase) {
     if (app('env') === 'local') {
         $key = Key::available()->inRandomOrder()->take(1)->first();
@@ -24,9 +31,3 @@ $factory->afterMaking(Purchase::class, function (Purchase $purchase) {
     }
 });
 
-$factory->state(Purchase::class, 'test', function (Faker $faker) {
-    return [
-        'key_id' => factory(Key::class)->state('test'),
-        'buyer_id' => factory(User::class)->state('buyer'),
-    ];
-});

@@ -24,6 +24,11 @@ class Game extends Model
         return $this->keys->where('distributor_id', $distributor->id);
     }
 
+    public function platform()
+    {
+        return $this->belongsTo(Platform::class);
+    }
+
     public function sales()
     {
         return $this->hasManyThrough(Purchase::class, Key::class);

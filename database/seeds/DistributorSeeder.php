@@ -1,20 +1,34 @@
 <?php
 
 use App\Distributor;
+use App\Platform;
 use Illuminate\Database\Seeder;
 
 class DistributorSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
+    protected $distributors = [
+        'PS4' => [
+            'Playstation Store'
+        ],
+        'Xbox One' => [
+            'Microsoft Store'
+        ],
+        'PC' => [
+            'Steam', 'GOG', 'Uplay', 'Epic Games Store'
+        ],
+        'Nintendo Switch' => [
+            'Nintendo eShop'
+        ]
+    ];
+
     public function run()
     {
-        factory(Distributor::class)->state('steam')->create();
-        factory(Distributor::class)->state('egs')->create();
-        factory(Distributor::class)->state('ps store')->create();
-        factory(Distributor::class)->state('gog')->create();
+        foreach ($this->distributors as $platform => $distributors) {
+            $platform = factory(Platform::class)->create(['name' => $platform]);
+
+            foreach ($distributors as $distributor) {
+                factory(Distributor::class)->create(['name' => $distributor, 'platform_id' => $platform]);
+            }
+        }
     }
 }

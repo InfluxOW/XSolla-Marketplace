@@ -19,6 +19,7 @@ class CreateGamesTable extends Migration
             $table->string('slug')->unique();
             $table->integer('price');
             $table->text('description')->nullable();
+            $table->foreignId('platform_id')->index()->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
