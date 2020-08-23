@@ -16,7 +16,7 @@ class GamesController extends Controller
         $this->middleware(['auth:api', 'seller'])->only('store');
     }
 
-    public function index(Request $request)
+    public function index()
     {
         $games = GameRepository::getGamesForIndexPage();
 

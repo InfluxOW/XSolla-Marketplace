@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
 use App\Http\Resources\PlatformsResource;
 use App\Platform;
-use Illuminate\Http\Request;
 
-class PlatformsController extends Controller
+class PlatformsController
 {
-    public function index()
+    public function __invoke()
     {
         $platforms = Platform::with('distributors', 'distributors.games', 'games')->get();
 

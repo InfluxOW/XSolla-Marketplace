@@ -20,9 +20,9 @@ Route::post('register', 'API\Auth\RegisterController@register')->name('register'
 /* Games */
 Route::apiResource('games', 'API\GamesController')->only('index', 'store', 'show')->parameters(['games' => 'game:slug']);
 /* Distributors */
-Route::get('distributors', 'API\DistributorsController@index')->name('distributors.index');
+Route::get('distributors', 'API\DistributorsController')->name('distributors');
 /* Platforms */
-Route::get('platforms', 'API\PlatformsController@index')->name('platforms.index');
+Route::get('platforms', 'API\PlatformsController')->name('platforms');
 /* Purchases */
 Route::post('games/{game:slug}/purchase', 'API\PurchasesController@store')->name('purchases.store');
 /* Sales */

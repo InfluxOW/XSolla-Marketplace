@@ -36,16 +36,4 @@ class DistributorTest extends TestCase
         $this->assertInstanceOf(Game::class, $this->distributor->games->first());
         $this->assertTrue($this->distributor->games->contains($game));
     }
-
-    /** @test */
-    public function it_knows_its_games_count_through_available_keys()
-    {
-        $games = factory(Game::class, 5)->state('test')->create();
-        $games->each(function ($game) {
-            factory(Key::class)->state('test')->create(['distributor_id' => $this->distributor, 'game_id' => $game]);
-        });
-
-        $this->assertEquals($games->count(), $this->distributor->games_count);
-
-    }
 }

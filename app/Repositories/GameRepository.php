@@ -17,6 +17,7 @@ class GameRepository
             ->allowedFilters([
                 AllowedFilter::exact('platform', 'platform.slug'),
                 AllowedFilter::exact('distributor', 'distributors.slug'),
+                AllowedFilter::scope('available'),
                 AllowedFilter::callback('price_lte', function (Builder $query, $price) {
                     return $query->where('price', '<=', $price);
                 }),
