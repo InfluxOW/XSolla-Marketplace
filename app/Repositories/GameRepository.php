@@ -13,7 +13,7 @@ class GameRepository
 {
     public static function getGamesForIndexPage()
     {
-        return QueryBuilder::for(Game::class)
+        $query =  QueryBuilder::for(Game::class)
             ->allowedFilters([
                 AllowedFilter::exact('platform', 'platform.slug'),
                 AllowedFilter::exact('distributor', 'distributors.slug'),
@@ -31,8 +31,28 @@ class GameRepository
                 AllowedSort::field('name'),
             ])
             ->latest('updated_at')
-            ->with('availableKeys.distributor', 'platform')
+            ->with('availableKeys.distributor', 'platform');
+
+        /*
+         * Re-checking distributor filters because Spatie Query Builder is not working with
+         * my distributorsWithAvailableKeys method and I couldn't build a query scope to replace it.
+         * */
+
+        return self::recheckFilters($query)
             ->paginate(20)
             ->appends(request()->query());
+    }
+
+    protected static function recheckFilters($query)
+    {
+        $distributorFilter = request()->query('filter')['distributor'] ?? null;
+
+        if (isset($distributorFilter)) {
+            $query = $query->get()->filter(function(Game $game) use ($distributorFilter) {
+                return $game->distributorsWithAvailableKeys()->pluck('slug')->contains($distributorFilter);
+            });
+        }
+
+        return $query;
     }
 }

@@ -33,9 +33,7 @@ class Game extends Model
 
     public function distributors()
     {
-        return $this->hasManyThrough(Distributor::class, Key::class, 'game_id', 'id', 'id', 'distributor_id')
-            ->join('games', 'games.id', '=', 'keys.game_id')
-            ->distinct('name');
+        return $this->hasManyThrough(Distributor::class, Key::class, 'game_id', 'id', null, 'distributor_id')->distinct('name');
     }
 
     public function sales()
