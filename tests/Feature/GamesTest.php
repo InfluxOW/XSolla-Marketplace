@@ -15,7 +15,7 @@ class GamesTest extends TestCase
     {
         parent::setUp();
 
-        $this->games = factory(Game::class, 3)->create();
+        $this->games = factory(Game::class, 3)->state('test')->create();
     }
 
     /** @test */

@@ -18,7 +18,7 @@ $factory->define(Key::class, function (Faker $faker) {
 $factory->state(Key::class, 'test', function (Faker $faker) {
     return [
         'game_id' => factory(Game::class)->state('test'),
-        'distributor_id' => factory(Distributor::class),
+        'distributor_id' => factory(Distributor::class)->state('test'),
         'owner_id' => factory(User::class)->state('seller'),
     ];
 });

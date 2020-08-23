@@ -17,7 +17,7 @@ class GameTest extends TestCase
     {
         parent::setUp();
 
-        $this->game = factory(Game::class)->create();
+        $this->game = factory(Game::class)->state('test')->create();
     }
 
     /** @test */
@@ -32,8 +32,8 @@ class GameTest extends TestCase
     /** @test */
     public function it_has_keys_at_specific_distributor()
     {
-        $steam = factory(Distributor::class)->state('steam')->create();
-        $gog = factory(Distributor::class)->state('gog')->create();
+        $steam = factory(Distributor::class)->state('test')->create();
+        $gog = factory(Distributor::class)->state('test')->create();
 
         $keyAtSteam = factory(Key::class)->state('test')->create(['game_id' => $this->game, 'distributor_id' => $steam]);
         $keyAtGog = factory(Key::class)->state('test')->create(['game_id' => $this->game, 'distributor_id' => $gog]);
@@ -60,7 +60,7 @@ class GameTest extends TestCase
         $availableGame = $this->game;
         $availableKey = factory(Key::class)->state('test')->create(['game_id' => $availableGame]);
 
-        $unavailableGame = factory(Game::class)->create();
+        $unavailableGame = factory(Game::class)->state('test')->create();
         $unavailableKey = factory(Key::class)->state('test')->create(['game_id' => $unavailableGame]);
         $purchase = factory(Purchase::class)->state('test')->create(['key_id' => $unavailableKey]);
 

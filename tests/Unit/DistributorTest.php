@@ -30,7 +30,7 @@ class DistributorTest extends TestCase
     /** @test */
     public function it_has_games_through_its_keys()
     {
-        $game = factory(Game::class)->create();
+        $game = factory(Game::class)->state('test')->create();
         $key = factory(Key::class)->state('test')->create(['distributor_id' => $this->distributor, 'game_id' => $game]);
 
         $this->assertInstanceOf(Game::class, $this->distributor->games->first());
@@ -40,7 +40,7 @@ class DistributorTest extends TestCase
     /** @test */
     public function it_knows_its_games_count_through_available_keys()
     {
-        $games = factory(Game::class, 5)->create();
+        $games = factory(Game::class, 5)->state('test')->create();
         $games->each(function ($game) {
             factory(Key::class)->state('test')->create(['distributor_id' => $this->distributor, 'game_id' => $game]);
         });
