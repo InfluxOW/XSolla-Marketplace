@@ -16,14 +16,13 @@ class Distributor extends Model
         'games_count' => 'integer'
     ];
 
+    /*
+     * Relations
+     * */
+
     public function keys()
     {
         return $this->hasMany(Key::class);
-    }
-
-    public function availableKeys()
-    {
-        return $this->hasMany(Key::class)->available();
     }
 
     public function games()
@@ -31,10 +30,18 @@ class Distributor extends Model
         return $this->hasManyThrough(Game::class, Key::class, 'distributor_id', 'id', 'id', 'game_id')->distinct('name');
     }
 
+    /*
+     * Getters
+     * */
+
     public function getGamesCountAttribute()
     {
         return $this->games->count();
     }
+
+    /*
+     * Other
+     * */
 
     public function sluggable(): array
     {

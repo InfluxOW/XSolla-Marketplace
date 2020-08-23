@@ -18,6 +18,6 @@ class IncreaseSellerBalance
     {
         $key = $event->purchase->key;
 
-        $key->owner->increment('balance', $key->game->priceIncludingCommission());
+        $key->owner->increment('balance', $key->game->getPriceIncludingCommission());
     }
 }

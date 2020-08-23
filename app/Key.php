@@ -11,6 +11,10 @@ class Key extends Model
     protected $appends = ['isAvailable'];
     protected $touches = ['game'];
 
+    /*
+     * Relations
+     * */
+
     public function game()
     {
         return $this->belongsTo(Game::class);
@@ -31,6 +35,10 @@ class Key extends Model
         return $this->hasOne(Purchase::class);
     }
 
+    /*
+     * Check availability
+     * */
+
     public function scopeAvailable(Builder $query)
     {
         return $query->whereDoesntHave('purchase');
@@ -43,6 +51,6 @@ class Key extends Model
 
     public function isAvailable()
     {
-        return Purchase::where('key_id', $this->id)->doesntExist();
+        return $this->purchase()->doesntExist();
     }
 }

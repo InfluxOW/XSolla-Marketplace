@@ -17,6 +17,10 @@ class Game extends Model
         'price' => 'integer'
     ];
 
+    /*
+     * Relations
+     * */
+
     public function platform()
     {
         return $this->belongsTo(Platform::class);
@@ -27,16 +31,6 @@ class Game extends Model
         return $this->hasMany(Key::class);
     }
 
-    public function availableKeys()
-    {
-        return $this->keys()->available();
-    }
-
-    public function keysAtDistributor(Distributor $distributor)
-    {
-        return $this->keys()->where('distributor_id', $distributor->id);
-    }
-
     public function distributors()
     {
         return $this->hasManyThrough(Distributor::class, Key::class, 'game_id', 'id', 'id', 'distributor_id')
@@ -44,22 +38,44 @@ class Game extends Model
             ->distinct('name');
     }
 
-    public function distributorsWithAvailableKeys()
-    {
-        return $this->distributors()->whereHas('availableKeys', function (Builder $query) {
-            return $query->where('game_id', $this->id);
-        });
-    }
-
-    public function priceIncludingCommission()
-    {
-        return $this->price * (1 - config('app.marketplace.commission'));
-    }
-
     public function sales()
     {
         return $this->hasManyThrough(Purchase::class, Key::class);
     }
+
+    /*
+     * Helping relations
+     * */
+
+    public function availableKeys()
+    {
+        return $this->keys()->available();
+    }
+
+    public function distributorsWithAvailableKeys()
+    {
+        return $this->distributors()->whereHas('keys', function (Builder $query) {
+            return $query->available()->where('game_id', $this->id);
+        });
+    }
+
+    public function keysAtDistributor(Distributor $distributor)
+    {
+        return $this->keys()->where('distributor_id', $distributor->id);
+    }
+
+    /*
+     * Getters
+     * */
+
+    public function getPriceIncludingCommission()
+    {
+        return $this->price * (1 - config('app.marketplace.commission'));
+    }
+
+    /*
+     * Check availability
+     * */
 
     public function isAvailable()
     {
@@ -75,6 +91,10 @@ class Game extends Model
     {
         return $query->whereHas('keys', fn(Builder $query) => $query->whereDoesntHave('purchase'));
     }
+
+    /*
+     * Other
+     * */
 
     public function sluggable(): array
     {

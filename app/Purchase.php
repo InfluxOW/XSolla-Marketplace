@@ -12,6 +12,10 @@ class Purchase extends Model
         'made_at' => 'datetime',
     ];
 
+    /*
+     * Relations
+     * */
+
     public function key()
     {
         return $this->belongsTo(Key::class);

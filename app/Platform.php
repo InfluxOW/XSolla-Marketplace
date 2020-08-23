@@ -12,6 +12,10 @@ class Platform extends Model
     protected $fillable = ['name'];
     public $timestamps = false;
 
+    /*
+     * Relations
+     * */
+
     public function games()
     {
         return $this->hasMany(Game::class);
@@ -21,6 +25,10 @@ class Platform extends Model
     {
         return $this->hasMany(Distributor::class);
     }
+
+    /*
+     * Other
+     * */
 
     public function sluggable(): array
     {
