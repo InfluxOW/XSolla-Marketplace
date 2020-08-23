@@ -9,6 +9,7 @@ class Key extends Model
 {
     protected $fillable = ['serial_number'];
     protected $appends = ['isAvailable'];
+    protected $touches = ['game'];
 
     public function game()
     {

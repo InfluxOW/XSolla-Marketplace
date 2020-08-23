@@ -16,7 +16,7 @@ class GameRepository
         return QueryBuilder::for(Game::class)
             ->allowedFilters([
                 AllowedFilter::exact('platform', 'platform.slug'),
-                AllowedFilter::scope('distributor', 'has_distributor_with_available_keys'),
+                AllowedFilter::exact('distributor', 'distributors.slug'),
                 AllowedFilter::callback('price_lte', function (Builder $query, $price) {
                     return $query->where('price', '<=', $price);
                 }),
@@ -29,7 +29,7 @@ class GameRepository
                 AllowedSort::field('price'),
                 AllowedSort::field('name'),
             ])
-            ->latest()
+            ->latest('updated_at')
             ->with('availableKeys.distributor', 'platform')
             ->paginate(20)
             ->appends(request()->query());

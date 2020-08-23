@@ -32,6 +32,6 @@ class GamesController extends Controller
 
     public function show(Game $game)
     {
-        return new GamesResource($game->load('keys.distributor', 'platform'));
+        return new GamesResource($game->load('availableKeys.distributor', 'platform'));
     }
 }

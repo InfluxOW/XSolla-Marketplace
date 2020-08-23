@@ -13,6 +13,9 @@ class Game extends Model
     protected $fillable = ['name', 'description', 'price'];
     protected $appends = ['isAvailable'];
     protected $with = ['availableKeys'];
+    protected $casts = [
+        'price' => 'integer'
+    ];
 
     public function platform()
     {
@@ -26,19 +29,26 @@ class Game extends Model
 
     public function availableKeys()
     {
-        return $this->hasMany(Key::class)->available();
+        return $this->keys()->available();
     }
 
     public function keysAtDistributor(Distributor $distributor)
     {
-        return $this->keys->where('distributor_id', $distributor->id);
+        return $this->keys()->where('distributor_id', $distributor->id);
     }
 
     public function distributors()
     {
-        return $this->hasManyThrough(Distributor::class, Key::class, 'owner_id', 'id', 'id', 'distributor_id')
+        return $this->hasManyThrough(Distributor::class, Key::class, 'game_id', 'id', 'id', 'distributor_id')
             ->join('games', 'games.id', '=', 'keys.game_id')
             ->distinct('name');
+    }
+
+    public function distributorsWithAvailableKeys()
+    {
+        return $this->distributors()->whereHas('availableKeys', function (Builder $query) {
+            return $query->where('game_id', $this->id);
+        });
     }
 
     public function priceIncludingCommission()
@@ -59,13 +69,6 @@ class Game extends Model
     public function getIsAvailableAttribute()
     {
         return $this->isAvailable();
-    }
-
-    public function scopeHasDistributorWithAvailableKeys(Builder $query, $distributor): Builder
-    {
-        return $query->whereHas('distributors', function (Builder $query) use ($distributor) {
-            return $query->where('slug', $distributor)->whereHas('availableKeys');
-        });
     }
 
     public function scopeAvailable(Builder $query): Builder

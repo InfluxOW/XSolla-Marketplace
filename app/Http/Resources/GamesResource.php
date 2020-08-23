@@ -24,8 +24,6 @@ class GamesResource extends JsonResource
             ->groupBy(function ($item) {
                 return $item->distributor->name;
             })
-            ->map(function ($keys) {
-                return $keys->count();
-            });
+            ->map->count();
     }
 }

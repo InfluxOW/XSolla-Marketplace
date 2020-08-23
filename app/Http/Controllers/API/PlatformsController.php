@@ -11,7 +11,7 @@ class PlatformsController extends Controller
 {
     public function index()
     {
-        $platforms = Platform::with('distributors', 'distributors.games')->get();
+        $platforms = Platform::with('distributors', 'distributors.games', 'games')->get();
 
         return PlatformsResource::collection($platforms);
     }

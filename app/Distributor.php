@@ -12,10 +12,18 @@ class Distributor extends Model
     protected $fillable = ['name'];
     public $timestamps = false;
     protected $appends = ['games_count'];
+    protected $casts = [
+        'games_count' => 'integer'
+    ];
 
     public function keys()
     {
         return $this->hasMany(Key::class);
+    }
+
+    public function availableKeys()
+    {
+        return $this->hasMany(Key::class)->available();
     }
 
     public function games()
