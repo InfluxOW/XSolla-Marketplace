@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use App\Http\Resources\PlatformsResource;
+use App\Platform;
+use Illuminate\Http\Request;
+
+class PlatformsController extends Controller
+{
+    public function index()
+    {
+        $platforms = Platform::with('distributors', 'distributors.games')->get();
+
+        return PlatformsResource::collection($platforms);
+    }
+}

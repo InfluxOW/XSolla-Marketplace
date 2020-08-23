@@ -11,15 +11,8 @@ class DistributorsController extends Controller
 {
     public function index()
     {
-        $distributors = Distributor::withCount('games')->get();
+        $distributors = Distributor::with('games')->get();
 
         return DistributorsResource::collection($distributors);
-    }
-
-    public function show(Distributor $distributor)
-    {
-        $games = $distributor->games()->with('keys.distributor', 'platform')->paginate(20);
-
-        return GamesResource::collection($games);
     }
 }

@@ -11,7 +11,7 @@ class DistributorsResource extends JsonResource
         return [
             'name' => $this->name,
             'games_count' => $this->games_count,
-            'link' => route('distributors.show', ['distributor' => $this])
+            'link' => route('games.index', ['filters[distributor]' => $this->resource->slug])
         ];
     }
 }
