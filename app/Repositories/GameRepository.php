@@ -14,7 +14,7 @@ class GameRepository
     {
         return  QueryBuilder::for(Game::class)
             ->allowedFilters([
-                AllowedFilter::exact('name'),
+                'name',
                 AllowedFilter::exact('platform', 'platform.slug'),
                 AllowedFilter::exact('distributor', 'distributors.slug'),
                 AllowedFilter::scope('available'),

@@ -11,8 +11,6 @@ use Tests\TestCase;
 
 class DistributorsTest extends TestCase
 {
-    protected $distributors;
-
     /** @test */
     public function user_can_fetch_all_distributors()
     {
@@ -20,6 +18,11 @@ class DistributorsTest extends TestCase
 
         $this->get(route('distributors.index'))
             ->assertOk()
-            ->assertJsonCount($distributors->count(), 'data');
+            ->assertJsonCount($distributors->count(), 'data')
+            ->assertJsonStructure([
+                'data' => [
+                    '*' => ['name']
+                ]
+            ]);
     }
 }

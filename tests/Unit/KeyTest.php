@@ -52,10 +52,9 @@ class KeyTest extends TestCase
     {
         $this->assertTrue($this->key->isAvailable());
 
-        $buyer = factory(User::class)->state('buyer')->create();
-        $buyer->purchase($this->key);
+        $purchase = factory(Purchase::class)->state('test')->create(['key_id' => $this->key]);
 
-        $this->assertFalse($this->key->isAvailable());
+        $this->assertFalse($this->key->fresh()->isAvailable());
     }
 
     /** @test */
