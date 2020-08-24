@@ -2,8 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Distributor;
 use App\Game;
+use App\Key;
 use App\Platform;
+use App\Purchase;
 use App\User;
 use Illuminate\Support\Arr;
 use Tests\TestCase;
@@ -44,6 +47,27 @@ class GamesTest extends TestCase
                     'name', 'description', 'price'
                 ]
             ]);
+    }
+
+    /** @test */
+    public function it_shows_a_number_of_available_keys_for_the_game_for_an_every_distributor()
+    {
+        $game = $this->games->first();
+        $steam = factory(Distributor::class)->create(['name' => 'Steam', 'platform_id' => $game->platform]);
+        $gog = factory(Distributor::class)->create(['name' => 'GOG', 'platform_id' => $game->platform]);
+
+        $keysAtSteam = factory(Key::class, 3)->state('test')->create(['game_id' => $game, 'distributor_id' => $steam]);
+        $keysAtGog = factory(Key::class, 2)->state('test')->create(['game_id' => $game, 'distributor_id' => $gog]);
+        $purchase = factory(Purchase::class)->state('test')->create(['key_id' => $keysAtSteam->first()]);
+
+        $game = $this->get(route('games.show', ['game' => $game]))
+            ->assertOk()
+            ->json('data');
+
+        $this->assertEquals(
+            $game['available_keys'],
+            ['Steam' => $keysAtSteam->filter->isAvailable()->count(), 'GOG' => $keysAtGog->filter->isAvailable()->count()]
+        );
     }
 
     /** @test */

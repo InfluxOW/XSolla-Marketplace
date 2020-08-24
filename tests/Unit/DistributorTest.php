@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Distributor;
 use App\Game;
 use App\Key;
+use App\Platform;
 use Tests\TestCase;
 
 class DistributorTest extends TestCase
@@ -16,6 +17,12 @@ class DistributorTest extends TestCase
         parent::setUp();
 
         $this->distributor = factory(Distributor::class)->state('test')->create();
+    }
+
+    /** @test */
+    public function it_belongs_to_the_platform()
+    {
+        $this->assertInstanceOf(Platform::class, $this->distributor->platform);
     }
 
     /** @test */

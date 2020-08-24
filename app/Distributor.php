@@ -26,6 +26,11 @@ class Distributor extends Model
         return $this->hasManyThrough(Game::class, Key::class, 'distributor_id', 'id', 'id', 'game_id')->distinct('name');
     }
 
+    public function platform()
+    {
+        return $this->belongsTo(Platform::class);
+    }
+
     /*
      * Other
      * */

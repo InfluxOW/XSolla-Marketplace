@@ -10,7 +10,7 @@ class DistributorsController extends Controller
 {
     public function index()
     {
-        $distributors = Distributor::with('games')->get();
+        $distributors = Distributor::with('games', 'platform')->get();
 
         return DistributorsResource::collection($distributors);
     }
