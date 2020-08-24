@@ -37,21 +37,6 @@ class GameTest extends TestCase
     }
 
     /** @test */
-    public function it_has_keys_at_specific_distributor()
-    {
-        $steam = factory(Distributor::class)->state('test')->create();
-        $gog = factory(Distributor::class)->state('test')->create();
-
-        $keyAtSteam = factory(Key::class)->state('test')->create(['game_id' => $this->game, 'distributor_id' => $steam]);
-        $keyAtGog = factory(Key::class)->state('test')->create(['game_id' => $this->game, 'distributor_id' => $gog]);
-
-        $this->assertTrue($this->game->keysAtDistributor($steam)->get()->contains($keyAtSteam));
-        $this->assertFalse($this->game->keysAtDistributor($steam)->get()->contains($keyAtGog));
-        $this->assertTrue($this->game->keysAtDistributor($gog)->get()->contains($keyAtGog));
-        $this->assertFalse($this->game->keysAtDistributor($gog)->get()->contains($keyAtSteam));
-    }
-
-    /** @test */
     public function it_has_distributors_through_its_keys()
     {
         $distributor = factory(Distributor::class)->state('test')->create();
@@ -72,7 +57,7 @@ class GameTest extends TestCase
     }
 
     /** @test */
-    public function it_can_be_scoped_to_only_available_for_purchase_games()
+    public function it_can_be_scoped_to_games_that_are_available_for_purchase()
     {
         $availableGame = $this->game;
         $availableKey = factory(Key::class)->state('test')->create(['game_id' => $availableGame]);
@@ -83,6 +68,22 @@ class GameTest extends TestCase
 
         $this->assertTrue(Game::available()->get()->contains($availableGame));
         $this->assertFalse(Game::available()->get()->contains($unavailableGame));
+    }
+
+    /** @test */
+    public function it_can_be_scoped_to_games_that_are_available_for_purchase_at_the_specific_distributor()
+    {
+        $availableGame = $this->game;
+        $availableDistributor = factory(Distributor::class)->state('test')->create();
+        $availableKey = factory(Key::class)->state('test')->create(['game_id' => $availableGame, 'distributor_id' => $availableDistributor]);
+
+        $unavailableGame = factory(Game::class)->state('test')->create();
+        $unavailableDistributor = factory(Distributor::class)->state('test')->create();
+        $unavailableKey = factory(Key::class)->state('test')->create(['game_id' => $unavailableGame, 'distributor_id' => $unavailableDistributor]);
+        $purchase = factory(Purchase::class)->state('test')->create(['key_id' => $unavailableKey]);
+
+        $this->assertTrue(Game::availableAtDistributor($availableDistributor->slug)->get()->contains($availableGame));
+        $this->assertFalse(Game::availableAtDistributor($unavailableDistributor->slug)->get()->contains($unavailableGame));
     }
 
     /** @test */

@@ -54,16 +54,6 @@ class Game extends Model
      * Check availability
      * */
 
-    public function isAvailable()
-    {
-        return $this->keys->filter->isAvailable()->count() > 0;
-    }
-
-    public function getIsAvailableAttribute()
-    {
-        return $this->isAvailable();
-    }
-
     public function scopeAvailable(Builder $query): Builder
     {
         return $query->whereHas('keys', fn(Builder $query) => $query->whereDoesntHave('purchase'));
@@ -74,6 +64,16 @@ class Game extends Model
         $distributor = Distributor::whereSlug($distributor)->firstOrFail();
 
         return $query->whereHas('keys', fn(Builder $query) => $query->where('distributor_id', $distributor->id)->whereDoesntHave('purchase'));
+    }
+
+    public function isAvailable()
+    {
+        return $this->keys->filter->isAvailable()->count() > 0;
+    }
+
+    public function getIsAvailableAttribute()
+    {
+        return $this->isAvailable();
     }
 
     /*

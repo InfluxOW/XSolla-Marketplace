@@ -33,7 +33,7 @@ class UserTest extends TestCase
     }
 
     /** @test */
-    public function it_can_be_scoped_to_only_buyers_or_sellers()
+    public function it_can_be_scoped_to_users_with_the_specific_role()
     {
         $this->assertTrue(User::buyer()->get()->contains($this->buyer));
         $this->assertFalse(User::buyer()->get()->contains($this->seller));
@@ -59,37 +59,5 @@ class UserTest extends TestCase
 
         $this->assertInstanceOf(Purchase::class, $this->seller->sales->first());
         $this->assertTrue($this->seller->sales->contains($sale));
-    }
-
-    /** @test */
-    public function it_can_purchase_a_key()
-    {
-        $key = factory(Key::class)->state('test')->create(['owner_id' => $this->seller]);
-
-        $this->assertTrue($key->isAvailable());
-        $this->buyer->purchase($key);
-        $this->assertFalse($key->isAvailable());
-    }
-
-    /** @test */
-    public function purchasing_a_key_fires_purchase_created_event()
-    {
-        $key = factory(Key::class)->state('test')->create();
-        $buyer = factory(User::class)->state('buyer')->create();
-
-        Event::fake();
-        $buyer->purchase($key);
-        Event::assertDispatched(PurchaseCreated::class);
-    }
-
-    /** @test */
-    public function purchasing_a_key_increases_seller_balance()
-    {
-        $key = factory(Key::class)->state('test')->create();
-        $buyer = factory(User::class)->state('buyer')->create();
-
-        $this->assertEquals(0, $key->owner->balance);
-        $buyer->purchase($key);
-        $this->assertEquals($key->game->priceIncludingCommission(), $key->owner->balance);
     }
 }

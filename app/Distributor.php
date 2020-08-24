@@ -27,15 +27,6 @@ class Distributor extends Model
     }
 
     /*
-     * Helping relations
-     * */
-
-    public function gamesAvailableAtDistributor()
-    {
-        return $this->games()->where('distributor_id', $this->id)->available();
-    }
-
-    /*
      * Other
      * */
 
