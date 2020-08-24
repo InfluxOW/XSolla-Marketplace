@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Distributor;
 use App\Game;
 use App\Key;
 use App\Purchase;

@@ -27,3 +27,4 @@ Route::apiResource('games', 'API\GamesController')->only('index', 'store', 'show
 Route::post('games/{game:slug}/purchase', 'API\PurchasesController@store')->name('purchases.store');
 /* Sales */
 Route::post('games/{game:slug}/sell', 'API\SalesController@store')->name('sales.store');
+Route::post('user/{user:username}', 'API\UserServersController@store')->name('user.server');

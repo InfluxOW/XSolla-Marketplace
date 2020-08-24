@@ -44,6 +44,13 @@ class Key extends Model
         return $query->whereDoesntHave('purchase');
     }
 
+    public function scopeAvailableAtDistributor(Builder $query, $distributor): Builder
+    {
+        $distributor = Distributor::whereSlug($distributor)->firstOrFail();
+
+        return $query->available()->where('distributor_id', $distributor->id);
+    }
+
     public function getIsAvailableAttribute()
     {
         return $this->isAvailable();

@@ -25,11 +25,12 @@ class PurchasesTest extends TestCase
     public function a_buyer_can_buy_keys_for_the_specific_game()
     {
         $key = factory(Key::class)->state('test')->create();
-        $attributes = ['distributor' => $key->distributor->slug, 'card' => '4242424242424242'];
+        $attributes = ['distributor' => $key->distributor->slug];
 
         $response = $this->actingAs($this->buyer, 'api')->post(
             route('purchases.store', ['game' => $key->game]),
             $attributes
         );
+        dd($response->content());
     }
 }

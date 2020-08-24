@@ -50,6 +50,11 @@ class Game extends Model
         return $this->price * (1 - config('app.marketplace.commission'));
     }
 
+    public function getFirstAvailableKeyAtDistributor($distributor)
+    {
+        return $this->keys()->availableAtDistributor($distributor)->first();
+    }
+
     /*
      * Check availability
      * */
@@ -61,9 +66,7 @@ class Game extends Model
 
     public function scopeAvailableAtDistributor(Builder $query, $distributor): Builder
     {
-        $distributor = Distributor::whereSlug($distributor)->firstOrFail();
-
-        return $query->whereHas('keys', fn(Builder $query) => $query->where('distributor_id', $distributor->id)->whereDoesntHave('purchase'));
+        return $query->whereHas('keys', fn(Builder $query) => $query->availableAtDistributor($distributor));
     }
 
     public function isAvailable()
