@@ -51,6 +51,6 @@ class Key extends Model
 
     public function isAvailable()
     {
-        return $this->purchase()->doesntExist();
+        return is_null($this->purchase);
     }
 }

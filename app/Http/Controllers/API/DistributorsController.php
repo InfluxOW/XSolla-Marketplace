@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Distributor;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\DistributorsResource;
 
-class DistributorsController
+class DistributorsController extends Controller
 {
-    public function __invoke()
+    public function index()
     {
         $distributors = Distributor::with('games')->get();
 

@@ -12,7 +12,7 @@ class Game extends Model
 
     protected $fillable = ['name', 'description', 'price'];
     protected $appends = ['isAvailable'];
-    protected $with = ['availableKeys'];
+    protected $with = ['keys'];
     protected $casts = [
         'price' => 'integer'
     ];
@@ -42,27 +42,6 @@ class Game extends Model
     }
 
     /*
-     * Helping relations
-     * */
-
-    public function availableKeys()
-    {
-        return $this->keys()->available();
-    }
-
-    public function distributorsWithAvailableKeys()
-    {
-        return $this->distributors()->whereHas('keys', function (Builder $query) {
-            return $query->available()->where('game_id', $this->id);
-        });
-    }
-
-    public function keysAtDistributor(Distributor $distributor)
-    {
-        return $this->keys()->where('distributor_id', $distributor->id);
-    }
-
-    /*
      * Getters
      * */
 
@@ -88,6 +67,13 @@ class Game extends Model
     public function scopeAvailable(Builder $query): Builder
     {
         return $query->whereHas('keys', fn(Builder $query) => $query->whereDoesntHave('purchase'));
+    }
+
+    public function scopeAvailableAtDistributor(Builder $query, $distributor): Builder
+    {
+        $distributor = Distributor::whereSlug($distributor)->firstOrFail();
+
+        return $query->whereHas('keys', fn(Builder $query) => $query->where('distributor_id', $distributor->id)->whereDoesntHave('purchase'));
     }
 
     /*

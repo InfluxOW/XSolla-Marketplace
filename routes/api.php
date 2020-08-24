@@ -17,12 +17,12 @@ use Illuminate\Support\Facades\Route;
 /* Auth */
 Route::post('login', 'API\Auth\LoginController@login')->name('login');
 Route::post('register', 'API\Auth\RegisterController@register')->name('register');
+/* Distributors */
+Route::apiResource('distributors', 'API\DistributorsController')->only('index')->parameters(['distributors' => 'distributor:slug']);
+/* Platforms */
+Route::apiResource('platforms', 'API\PlatformsController')->only('index')->parameters(['platforms' => 'platform:slug']);
 /* Games */
 Route::apiResource('games', 'API\GamesController')->only('index', 'store', 'show')->parameters(['games' => 'game:slug']);
-/* Distributors */
-Route::get('distributors', 'API\DistributorsController')->name('distributors');
-/* Platforms */
-Route::get('platforms', 'API\PlatformsController')->name('platforms');
 /* Purchases */
 Route::post('games/{game:slug}/purchase', 'API\PurchasesController@store')->name('purchases.store');
 /* Sales */

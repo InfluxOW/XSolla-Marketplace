@@ -20,10 +20,14 @@ class GamesResource extends JsonResource
 
     protected function getAvailableKeysCount()
     {
-        return $this->whenLoaded('availableKeys')
-            ->groupBy(function ($item) {
-                return $item->distributor->name;
-            })
-            ->map->count();
+        return  $this->whenLoaded(
+            'keys',
+            $this->keys->groupBy(function ($key) {
+                    return $key->distributor->name;
+                })
+                ->map(function ($keys) {
+                    return $keys->filter->isAvailable()->count();
+                })
+        );
     }
 }
