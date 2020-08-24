@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Billing
 {
-    public static function generatePaymentSession(Model $product, User $user, int $price): string
+    public static function generatePaymentToken(Model $product, string $email, int $price): string
     {
         $timestamp = now()->timestamp;
+        $key = $product->getKey();
+        $class = $product->getMorphClass();
 
-        return bcrypt("{$product->id}/{$user->email}/{$price}/{$timestamp}");
+        return bcrypt("{$key}/{$class}/{$email}/{$price}/{$timestamp}");
     }
 }

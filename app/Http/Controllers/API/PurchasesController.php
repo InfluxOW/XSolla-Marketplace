@@ -5,8 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Game;
 use App\Helpers\Billing;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\PurchasesRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PurchasesController extends Controller
 {
@@ -15,11 +15,10 @@ class PurchasesController extends Controller
         $this->middleware(['auth:api', 'buyer']);
     }
 
-    public function store(PurchasesRequest $request, Game $game)
+    public function store(Request $request, Game $game, $distributor)
     {
-        $key = $game->getFirstAvailableKeyAtDistributor($request->distributor);
-        $session = Billing::generatePaymentSession($key, $request->user(), $game->price);
+        $key = $game->getFirstAvailableKeyAtDistributor($distributor);
 
-        return 'done';
+        return Billing::generatePaymentToken($key, Auth::user()->email, $game->price);
     }
 }
