@@ -36,6 +36,15 @@ class Key extends Model
     }
 
     /*
+     * Check if user has reserved a key
+     * */
+
+    public function isReservedBy(User $user)
+    {
+        return $this->purchases->filter->isIncompleted()->where('buyer_id', $user->id)->count() > 0;
+    }
+
+    /*
      * Check availability
      * */
 

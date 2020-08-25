@@ -87,12 +87,24 @@ class GameTest extends TestCase
     }
 
     /** @test */
-    public function it_knows_if_it_is_available_for_sale()
+    public function it_is_not_available_for_sale_having_none_available_keys()
     {
         $this->assertFalse($this->game->isAvailable());
 
         factory(Key::class)->state('test')->create(['game_id' => $this->game]);
 
         $this->assertTrue($this->game->fresh()->isAvailable());
+    }
+
+    /** @test */
+    public function it_knows_its_first_available_key_at_the_specified_distributor()
+    {
+        $distributor = factory(Distributor::class)->state('test')->create();
+        $availableKey = factory(Key::class)->state('test')->create(['game_id' => $this->game, 'distributor_id' => $distributor]);
+
+        $unavailableKey = factory(Key::class)->state('test')->create(['game_id' => $this->game, 'distributor_id' => $distributor]);
+        $purchase = factory(Purchase::class)->state('test')->create(['key_id' => $unavailableKey]);
+
+        $this->assertTrue($this->game->getFirstAvailableKeyAtDistributor($distributor->slug)->is($availableKey));
     }
 }

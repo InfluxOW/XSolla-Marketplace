@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Events\PurchaseConfirmed;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -31,6 +32,17 @@ class Purchase extends Model
     public function seller()
     {
         return $this->key->owner();
+    }
+
+    /*
+     * Helpers
+     * */
+
+    public function confirm()
+    {
+        $this->update(['made_at' => now()]);
+        
+        PurchaseConfirmed::dispatch($this);
     }
 
     /*

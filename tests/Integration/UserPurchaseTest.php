@@ -4,7 +4,6 @@ namespace Tests\Integration;
 
 use App\Events\KeyPurchased;
 use App\Key;
-use App\Purchase;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -27,48 +26,50 @@ class UserPurchaseTest extends TestCase
     {
         $key = factory(Key::class)->state('test')->create();
 
-        $this->assertFalse(Purchase::where('key_id', $key->id)->exists());
+        $this->assertFalse($key->isReservedBy($this->buyer));
         $this->buyer->reserve($key);
-        $this->assertTrue(Purchase::where('key_id', $key->id)->exists());
+        $this->assertTrue($key->fresh()->isReservedBy($this->buyer));
     }
 
     /** @test */
     public function key_keeps_being_available_when_user_reserves_it()
     {
         $key = factory(Key::class)->state('test')->create();
-        $this->buyer->reserve($key);
 
+        $this->assertTrue($key->isAvailable());
+        $this->buyer->reserve($key);
         $this->assertTrue($key->isAvailable());
     }
 
     /** @test */
-    public function key_becomes_unavailable_once_user_reserves_it_and_pays_for()
+    public function reserved_key_becomes_unavailable_once_user_confirms_purchase()
     {
         $key = factory(Key::class)->state('test')->create();
-        $token = $this->buyer->reserve($key)['payment_session_token'];
-        $this->buyer->completePurchase($token);
+        $purchase = $this->buyer->reserve($key);
+        $this->buyer->confirmPurchase($purchase);
+
         $this->assertFalse($key->isAvailable());
     }
 
     /** @test */
-    public function completing_a_purchase_fires_key_purchased_event()
+    public function purchase_confirmation_fires_key_purchased_event()
     {
         $key = factory(Key::class)->state('test')->create();
-        $token = $this->buyer->reserve($key)['payment_session_token'];
+        $purchase = $this->buyer->reserve($key);
 
         Event::fake();
-        $this->buyer->completePurchase($token);
+        $this->buyer->confirmPurchase($purchase);
         Event::assertDispatched(KeyPurchased::class);
     }
 
     /** @test */
-    public function completing_a_purchase_increases_seller_balance()
+    public function when_purchase_is_confirmed_seller_balance_is_increased()
     {
         $key = factory(Key::class)->state('test')->create();
-        $token = $this->buyer->reserve($key)['payment_session_token'];
+        $purchase = $this->buyer->reserve($key);
 
         $this->assertEquals(0, $key->owner->balance);
-        $this->buyer->completePurchase($token);
+        $this->buyer->confirmPurchase($purchase);
         $this->assertEquals($key->game->getPriceIncludingCommission(), $key->fresh()->owner->balance);
     }
 }

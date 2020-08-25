@@ -88,17 +88,4 @@ class User extends Authenticatable
             $purchase->save();
         });
     }
-
-    public function confirmPurchase(Purchase $purchase)
-    {
-        $purchase->update(['made_at' => now()]);
-        KeyPurchased::dispatch($purchase);
-    }
-
-    public function purchase(Key $key)
-    {
-        $purchase = $this->purchases->filter->isIncompleted()->where('buyer_id', $this->id)->where('key_id', $key->id)->latest()->first();
-        $purchase->update(['made_at' => now()]);
-        KeyPurchased::dispatch($purchase);
-    }
 }

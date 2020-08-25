@@ -15,7 +15,7 @@ class PurchaseTest extends TestCase
     {
         parent::setUp();
 
-        $this->purchase = factory(Purchase::class)->state('test')->create();
+        $this->purchase = factory(Purchase::class)->state('test')->create(['made_at' => null]);
     }
 
     /** @test */
@@ -31,8 +31,20 @@ class PurchaseTest extends TestCase
     }
 
     /** @test */
-    public function it_belongs_to_a_seller()
+    public function it_has_a_seller()
     {
         $this->assertInstanceOf(User::class, $this->purchase->seller);
+    }
+
+    /** @test */
+    public function it_knows_if_it_is_completed_or_not()
+    {
+        $this->assertFalse($this->purchase->isCompleted());
+        $this->assertTrue($this->purchase->isIncompleted());
+
+        $this->purchase->confirm();
+
+        $this->assertFalse($this->purchase->isCompleted());
+        $this->assertTrue($this->purchase->isIncompleted());
     }
 }

@@ -16,6 +16,11 @@ class Distributor extends Model
      * Relations
      * */
 
+    public function platform()
+    {
+        return $this->belongsTo(Platform::class);
+    }
+
     public function keys()
     {
         return $this->hasMany(Key::class);
@@ -24,11 +29,6 @@ class Distributor extends Model
     public function games()
     {
         return $this->hasManyThrough(Game::class, Key::class, 'distributor_id', 'id', 'id', 'game_id')->distinct('name');
-    }
-
-    public function platform()
-    {
-        return $this->belongsTo(Platform::class);
     }
 
     /*
