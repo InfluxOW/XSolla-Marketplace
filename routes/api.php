@@ -26,7 +26,7 @@ Route::apiResource('games', 'API\GamesController')->only('index', 'store', 'show
 /* Purchases */
 Route::post('games/{game:slug}/{distributor:slug}/purchase', 'API\PurchasesController@store')->name('purchases.store');
 /* Sales */
-Route::post('games/{game:slug}/sell', 'API\SalesController@store')->name('sales.store');
+Route::post('games/{game:slug}/{distributor:slug}/sell', 'API\SalesController@store')->name('sales.store');
 /* Fake External Services */
-Route::post('user/{user:username}', 'API\ExternalServices\UserServersController@store')->name('user.server');
-Route::post('bills', 'API\ExternalServices\BillingController@store')->name('bills.store');
+Route::post('user/{user:username}/sales', 'API\ExternalServices\UserSalesManagementController@store')->name('users.sales.store');
+Route::post('payments/{payment_session_token}/confirm', 'API\ExternalServices\PaymentsController@confirm')->name('payments.confirm');

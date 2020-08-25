@@ -2,7 +2,8 @@
 
 namespace App;
 
-use App\Events\PurchaseCreated;
+use App\Events\KeyPurchased;
+use App\Helpers\Billing;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -79,13 +80,25 @@ class User extends Authenticatable
         return $this->hasMany(Purchase::class, 'buyer_id');
     }
 
-    public function purchase(Key $key)
+    public function reserve(Key $key)
     {
         return tap($this->purchases()->make(), function ($purchase) use ($key) {
             $purchase->key()->associate($key);
+            $purchase->payment_session_token = Billing::generatePaymentToken($key, $this->email, $key->game->price);
             $purchase->save();
-
-            PurchaseCreated::dispatch($purchase);
         });
+    }
+
+    public function confirmPurchase(Purchase $purchase)
+    {
+        $purchase->update(['made_at' => now()]);
+        KeyPurchased::dispatch($purchase);
+    }
+
+    public function purchase(Key $key)
+    {
+        $purchase = $this->purchases->filter->isIncompleted()->where('buyer_id', $this->id)->where('key_id', $key->id)->latest()->first();
+        $purchase->update(['made_at' => now()]);
+        KeyPurchased::dispatch($purchase);
     }
 }

@@ -20,7 +20,6 @@ class SalesRequest extends FormRequest
         $distributor = Distributor::where('slug', $this->distributor)->firstOrFail();
 
         return [
-            'distributor' => ['required', 'string', 'exists:distributors,slug'],
             'keys' => ['required', 'array'],
             'keys.*' => [
                 'string',

@@ -30,9 +30,9 @@ class Key extends Model
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    public function purchase()
+    public function purchases()
     {
-        return $this->hasOne(Purchase::class);
+        return $this->hasMany(Purchase::class);
     }
 
     /*
@@ -41,7 +41,9 @@ class Key extends Model
 
     public function scopeAvailable(Builder $query)
     {
-        return $query->whereDoesntHave('purchase');
+        return $query->whereDoesntHave('purchases', function (Builder $query) {
+            return $query->completed();
+        });
     }
 
     public function scopeAvailableAtDistributor(Builder $query, $distributor): Builder
@@ -58,6 +60,6 @@ class Key extends Model
 
     public function isAvailable()
     {
-        return is_null($this->purchase);
+        return is_null($this->purchases->whereNotNull('made_at')->first());
     }
 }

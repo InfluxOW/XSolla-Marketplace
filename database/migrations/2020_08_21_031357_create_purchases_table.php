@@ -17,7 +17,7 @@ class CreatePurchasesTable extends Migration
             $table->id();
             $table->foreignId('key_id')->index()->constrained()->cascadeOnDelete();
             $table->foreignId('buyer_id')->index()->constrained('users')->cascadeOnDelete();
-            $table->unique(['key_id', 'buyer_id']);
+            $table->string('payment_session_token')->unique();
             $table->timestamp('made_at')->nullable();
         });
     }

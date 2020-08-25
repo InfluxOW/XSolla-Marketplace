@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Exceptions\NoAvailableKeysException;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -52,7 +53,13 @@ class Game extends Model
 
     public function getFirstAvailableKeyAtDistributor($distributor)
     {
-        return $this->keys()->availableAtDistributor($distributor)->first();
+        $keys =  $this->keys()->availableAtDistributor($distributor);
+
+        if ($keys->exists()) {
+            return $keys->first();
+        }
+
+        throw new NoAvailableKeysException('Selected game has no available keys at the specified distributor.');
     }
 
     /*
@@ -61,7 +68,7 @@ class Game extends Model
 
     public function scopeAvailable(Builder $query): Builder
     {
-        return $query->whereHas('keys', fn(Builder $query) => $query->whereDoesntHave('purchase'));
+        return $query->whereHas('keys', fn(Builder $query) => $query->available());
     }
 
     public function scopeAvailableAtDistributor(Builder $query, $distributor): Builder

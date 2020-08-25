@@ -39,21 +39,24 @@ class KeyTest extends TestCase
     }
 
     /** @test */
-    public function it_may_have_a_purchase()
+    public function it_has_purchases()
     {
-        $purchase = factory(Purchase::class)->state('test')->create(['key_id' => $this->key]);
+        $purchases = factory(Purchase::class, 2)->state('test')->create(['key_id' => $this->key, 'made_at' => null]);
 
-        $this->assertTrue($this->key->purchase->is($purchase));
-        $this->assertInstanceOf(Purchase::class, $this->key->purchase);
+        $this->assertTrue(
+            $this->key->purchases->contains($purchases->first() ||
+            $this->key->purchases->contains($purchases->second())
+        ));
+        $this->assertInstanceOf(Purchase::class, $this->key->purchases->first());
     }
 
     /** @test */
-    public function it_knows_if_it_is_available()
+    public function once_a_key_has_completed_purchase_it_becomes_unavailable()
     {
         $this->assertTrue($this->key->isAvailable());
-
-        $purchase = factory(Purchase::class)->state('test')->create(['key_id' => $this->key]);
-
+        $incompletedPurchase = factory(Purchase::class)->state('test')->create(['key_id' => $this->key, 'made_at' => null]);
+        $this->assertTrue($this->key->isAvailable());
+        $completedPurchase = factory(Purchase::class)->state('test')->create(['key_id' => $this->key]);
         $this->assertFalse($this->key->fresh()->isAvailable());
     }
 
@@ -61,11 +64,12 @@ class KeyTest extends TestCase
     public function it_can_be_scoped_to_only_available_keys()
     {
         $available = $this->key;
-        $unavailable = factory(Key::class)->state('test')->create();
-        $buyer = factory(User::class)->state('buyer')->create();
-        $buyer->purchase($unavailable);
+        $incompletedPurchase = factory(Purchase::class)->state('test')->create(['key_id' => $available, 'made_at' => null]);
 
-        $this->assertTrue(Key::available()->get()->contains($available));
-        $this->assertFalse(Key::available()->get()->contains($unavailable));
+        $unavailable = factory(Key::class)->state('test')->create();
+        $completedPurchase = factory(Purchase::class)->state('test')->create(['key_id' => $unavailable]);
+
+        $this->assertTrue(Key::available()->get()->contains($available->fresh()));
+        $this->assertFalse(Key::available()->get()->contains($unavailable->fresh()));
     }
 }

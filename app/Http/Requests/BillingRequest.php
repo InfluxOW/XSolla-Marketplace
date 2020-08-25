@@ -16,7 +16,7 @@ class BillingRequest extends FormRequest
     {
         return [
             'card' => ['required', 'integer', new LuhnRule()],
-            'payment_session_identifier' => ['required', 'string', 'min:30', 'max:100']
+            'payment_session_token' => ['required', 'string', 'min:30', 'max:100']
         ];
     }
 }

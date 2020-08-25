@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Distributor;
+use App\Game;
 use App\Key;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -24,12 +26,12 @@ class PurchasesTest extends TestCase
     /** @test */
     public function a_buyer_can_buy_keys_for_the_specific_game()
     {
-        $key = factory(Key::class)->state('test')->create();
-        $attributes = ['distributor' => $key->distributor->slug];
+        $game = factory(Game::class)->state('test')->create();
+        $distributor = factory(Distributor::class)->state('test')->create();
+        $key = factory(Key::class)->state('test')->create(['game_id' => $game, 'distributor_id' => $distributor]);
 
         $response = $this->actingAs($this->buyer, 'api')->post(
-            route('purchases.store', ['game' => $key->game]),
-            $attributes
+            route('purchases.store', ['game' => $game, 'distributor' => $distributor])
         );
         dd($response->content());
     }

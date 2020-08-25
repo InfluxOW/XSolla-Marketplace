@@ -32,7 +32,7 @@ class GameRepository
                 AllowedSort::field('name'),
             ])
             ->latest('updated_at')
-            ->with('keys.distributor', 'keys.purchase', 'platform')
+            ->with('keys.distributor', 'keys.purchases', 'platform')
             ->paginate(20)
             ->appends(request()->query());
     }

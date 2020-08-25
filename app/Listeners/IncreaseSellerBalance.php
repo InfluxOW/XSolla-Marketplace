@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Events\PurchaseCreated;
+use App\Events\KeyPurchased;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -11,10 +11,10 @@ class IncreaseSellerBalance
     /**
      * Handle the event.
      *
-     * @param  PurchaseCreated  $event
+     * @param  KeyPurchased  $event
      * @return void
      */
-    public function handle(PurchaseCreated $event)
+    public function handle(KeyPurchased $event)
     {
         $key = $event->purchase->key;
 
