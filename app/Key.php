@@ -41,7 +41,7 @@ class Key extends Model
 
     public function isReservedBy(User $user)
     {
-        return $this->purchases->filter->isIncompleted()->where('buyer_id', $user->id)->count() > 0;
+        return $this->purchases->filter->isUnconfirmed()->where('buyer_id', $user->id)->count() > 0;
     }
 
     /*
@@ -51,7 +51,7 @@ class Key extends Model
     public function scopeAvailable(Builder $query)
     {
         return $query->whereDoesntHave('purchases', function (Builder $query) {
-            return $query->completed();
+            return $query->confirmed();
         });
     }
 
@@ -69,6 +69,6 @@ class Key extends Model
 
     public function isAvailable()
     {
-        return is_null($this->purchases->whereNotNull('made_at')->first());
+        return is_null($this->purchases->whereNotNull('confirmed_at')->first());
     }
 }

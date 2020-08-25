@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Events\KeyPurchased;
+use App\Events\PurchaseConfirmed;
 use App\Helpers\Billing;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;

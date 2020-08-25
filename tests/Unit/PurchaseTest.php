@@ -15,7 +15,7 @@ class PurchaseTest extends TestCase
     {
         parent::setUp();
 
-        $this->purchase = factory(Purchase::class)->state('test')->create(['made_at' => null]);
+        $this->purchase = factory(Purchase::class)->state('test')->create(['confirmed_at' => null]);
     }
 
     /** @test */
@@ -37,14 +37,14 @@ class PurchaseTest extends TestCase
     }
 
     /** @test */
-    public function it_knows_if_it_is_completed_or_not()
+    public function it_knows_if_it_is_confirmed_or_not()
     {
-        $this->assertFalse($this->purchase->isCompleted());
-        $this->assertTrue($this->purchase->isIncompleted());
+        $this->assertFalse($this->purchase->isConfirmed());
+        $this->assertTrue($this->purchase->isUnconfirmed());
 
         $this->purchase->confirm();
 
-        $this->assertFalse($this->purchase->isCompleted());
-        $this->assertTrue($this->purchase->isIncompleted());
+        $this->assertTrue($this->purchase->isConfirmed());
+        $this->assertFalse($this->purchase->isUnconfirmed());
     }
 }

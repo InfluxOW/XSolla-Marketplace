@@ -9,9 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 class Purchase extends Model
 {
     public $timestamps = false;
-    protected $fillable = ['made_at', 'payment_session_token'];
+    protected $fillable = ['confirmed_at', 'payment_session_token'];
     protected $casts = [
-        'made_at' => 'datetime',
+        'confirmed_at' => 'datetime',
     ];
     protected $hidden = ['payment_session_token'];
 
@@ -40,8 +40,8 @@ class Purchase extends Model
 
     public function confirm()
     {
-        $this->update(['made_at' => now()]);
-        
+        $this->update(['confirmed_at' => now()]);
+
         PurchaseConfirmed::dispatch($this);
     }
 
@@ -49,23 +49,23 @@ class Purchase extends Model
      * Check completeness
      * */
 
-    public function scopeCompleted(Builder $query)
+    public function scopeConfirmed(Builder $query)
     {
-        return $query->whereNotNull('made_at');
+        return $query->whereNotNull('confirmed_at');
     }
 
-    public function scopeIncompleted(Builder $query)
+    public function scopeUnconfirmed(Builder $query)
     {
-        return $query->whereNull('made_at');
+        return $query->whereNull('confirmed_at');
     }
 
-    public function isCompleted()
+    public function isConfirmed()
     {
-        return isset($this->made_at);
+        return isset($this->confirmed_at);
     }
 
-    public function isIncompleted()
+    public function isUnconfirmed()
     {
-        return is_null($this->made_at);
+        return is_null($this->confirmed_at);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Tests\Integration;
 
-use App\Events\KeyPurchased;
+use App\Events\PurchaseConfirmed;
 use App\Key;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -46,7 +46,7 @@ class UserPurchaseTest extends TestCase
     {
         $key = factory(Key::class)->state('test')->create();
         $purchase = $this->buyer->reserve($key);
-        $this->buyer->confirmPurchase($purchase);
+        $purchase->confirm();
 
         $this->assertFalse($key->isAvailable());
     }
@@ -58,8 +58,8 @@ class UserPurchaseTest extends TestCase
         $purchase = $this->buyer->reserve($key);
 
         Event::fake();
-        $this->buyer->confirmPurchase($purchase);
-        Event::assertDispatched(KeyPurchased::class);
+        $purchase->confirm();
+        Event::assertDispatched(PurchaseConfirmed::class);
     }
 
     /** @test */
@@ -69,7 +69,7 @@ class UserPurchaseTest extends TestCase
         $purchase = $this->buyer->reserve($key);
 
         $this->assertEquals(0, $key->owner->balance);
-        $this->buyer->confirmPurchase($purchase);
+        $purchase->confirm();
         $this->assertEquals($key->game->getPriceIncludingCommission(), $key->fresh()->owner->balance);
     }
 }

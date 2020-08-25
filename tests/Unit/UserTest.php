@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Events\KeyPurchased;
+use App\Events\PurchaseConfirmed;
 use App\Key;
 use App\Purchase;
 use App\User;

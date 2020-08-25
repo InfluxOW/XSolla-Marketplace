@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Events\KeyPurchased;
+use App\Events\PurchaseConfirmed;
 use App\Listeners\IncreaseSellerBalance;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -20,7 +20,7 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        KeyPurchased::class => [
+        PurchaseConfirmed::class => [
             IncreaseSellerBalance::class,
         ]
     ];

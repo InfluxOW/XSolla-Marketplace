@@ -6,7 +6,7 @@ use App\Purchase;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class KeyPurchased
+class PurchaseConfirmed
 {
     use Dispatchable, SerializesModels;
 

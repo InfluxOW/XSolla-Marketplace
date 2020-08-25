@@ -9,7 +9,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Purchase::class, function (Faker $faker) {
     return [
-        'made_at' => $faker->dateTimeBetween('-3 months', 'now'),
+        'confirmed_at' => $faker->dateTimeBetween('-3 months', 'now'),
         'payment_session_token' => $faker->uuid
     ];
 });
