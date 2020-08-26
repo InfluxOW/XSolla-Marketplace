@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Distributor;
 use App\Game;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SalesRequest;
-use Illuminate\Http\Request;
+use App\Key;
 
 class SalesController extends Controller
 {
@@ -15,8 +14,10 @@ class SalesController extends Controller
         $this->middleware(['auth:api', 'seller']);
     }
 
-    public function store(SalesRequest $request, Game $game, Distributor $distributor)
+    public function store(SalesRequest $request, Game $game)
     {
+        Key::createManyByRequest($request);
 
+        return response("You have successfully put up for sale keys for the game {$game->name} at distributor {$request->distributor->name}!", 201);
     }
 }

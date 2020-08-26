@@ -29,4 +29,4 @@ Route::post('games/{game:slug}/{distributor:slug}/purchase', 'API\PurchasesContr
 Route::post('games/{game:slug}/{distributor:slug}/sell', 'API\SalesController@store')->name('sales.store');
 /* Fake External Services */
 Route::post('user/{user:username}/sales', 'API\ExternalServices\UserSalesManagementController@store')->name('users.sales.store');
-Route::post('payments/{payment_session_token}/confirm', 'API\ExternalServices\PaymentsController@confirm')->name('payments.confirm');
+Route::post('payments/confirm', 'API\ExternalServices\PaymentsController@confirm')->name('payments.confirm');

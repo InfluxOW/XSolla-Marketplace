@@ -6,7 +6,6 @@ use App\Exceptions\NoAvailableKeysException;
 use App\Game;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class PurchasesController extends Controller
 {
@@ -25,8 +24,8 @@ class PurchasesController extends Controller
         $purchase = $request->user()->reserve($key);
 
         return [
-            'message' => "You have successfully reserved a key for the game {$game->name} at {$purchase->key->distributor->name}. To initialize payment use your card at the specified billing provider.",
-            'billing_provider' => route('payments.confirm', ['payment_session_token' => $purchase->payment_session_token])
+            'message' => "You have successfully reserved a key for the game {$game->name} at {$purchase->key->distributor->name}. To initialize payment send HTTP POST request with your card credentials and payment session token to the billing provider.",
+            'payment_session_token' => $purchase['payment_session_token']
         ];
     }
 }

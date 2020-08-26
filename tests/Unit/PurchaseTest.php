@@ -15,7 +15,7 @@ class PurchaseTest extends TestCase
     {
         parent::setUp();
 
-        $this->purchase = factory(Purchase::class)->state('test')->create(['confirmed_at' => null]);
+        $this->purchase = factory(Purchase::class)->state('test')->create();
     }
 
     /** @test */
@@ -37,8 +37,10 @@ class PurchaseTest extends TestCase
     }
 
     /** @test */
-    public function it_knows_if_it_is_confirmed_or_not()
+    public function it_knows_if_it_is_confirmed_or_unconfirmed()
     {
+        $this->purchase->update(['confirmed_at' => null]);
+
         $this->assertFalse($this->purchase->isConfirmed());
         $this->assertTrue($this->purchase->isUnconfirmed());
 
@@ -46,5 +48,17 @@ class PurchaseTest extends TestCase
 
         $this->assertTrue($this->purchase->isConfirmed());
         $this->assertFalse($this->purchase->isUnconfirmed());
+    }
+
+    /** @test */
+    public function it_can_be_scoped_to_only_confirmed_purchases()
+    {
+        $confirmed = $this->purchase;
+        $unconfirmed = factory(Purchase::class)->state('test')->create(['confirmed_at' => null]);
+
+        $this->assertTrue(Purchase::confirmed()->get()->contains($confirmed));
+        $this->assertFalse(Purchase::confirmed()->get()->contains($unconfirmed));
+        $this->assertTrue(Purchase::unconfirmed()->get()->contains($unconfirmed));
+        $this->assertFalse(Purchase::unconfirmed()->get()->contains($confirmed));
     }
 }

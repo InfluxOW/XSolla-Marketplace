@@ -52,6 +52,15 @@ class UserTest extends TestCase
     }
 
     /** @test */
+    public function it_has_keys()
+    {
+        $key = factory(Key::class)->state('test')->create(['owner_id' => $this->seller]);
+
+        $this->assertInstanceOf(Key::class, $this->seller->keys->first());
+        $this->assertTrue($this->seller->keys->contains($key));
+    }
+
+    /** @test */
     public function it_has_sales_through_its_keys()
     {
         $key = factory(Key::class)->state('test')->create(['owner_id' => $this->seller]);

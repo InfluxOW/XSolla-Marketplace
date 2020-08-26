@@ -3,8 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Distributor;
-use App\Rules\ValidKey;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -17,8 +16,6 @@ class SalesRequest extends FormRequest
 
     public function rules()
     {
-        $distributor = Distributor::where('slug', $this->distributor)->firstOrFail();
-
         return [
             'keys' => ['required', 'array'],
             'keys.*' => [
@@ -27,7 +24,7 @@ class SalesRequest extends FormRequest
                 'alpha_dash',
                 'min:16',
                 'max:30',
-                "unique:keys,serial_number,NULL,id,distributor_id,$distributor->id",
+                "unique:keys,serial_number,NULL,id,distributor_id," . $this->distributor->id,
             ]
         ];
     }
@@ -39,5 +36,8 @@ class SalesRequest extends FormRequest
                 'keys' => [$this->keys],
             ]);
         }
+        $this->merge([
+           'distributor' => Distributor::where('platform_id', $this->game->platform_id)->where('slug', $this->distributor)->firstOrFail(),
+        ]);
     }
 }

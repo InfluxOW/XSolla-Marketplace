@@ -5,8 +5,11 @@ namespace Tests\Unit;
 use App\Distributor;
 use App\Game;
 use App\Key;
+use App\Platform;
 use App\Purchase;
 use App\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class KeyTest extends TestCase
@@ -39,7 +42,7 @@ class KeyTest extends TestCase
     }
 
     /** @test */
-    public function it_has_purchases()
+    public function it_may_have_purchases()
     {
         $purchases = factory(Purchase::class, 2)->state('test')->create(['key_id' => $this->key, 'confirmed_at' => null]);
 
@@ -96,5 +99,24 @@ class KeyTest extends TestCase
         $this->assertFalse(Key::availableAtDistributor($steam->slug)->get()->contains($availableAtPsStoreKey));
         $this->assertTrue(Key::availableAtDistributor($psStore->slug)->get()->contains($availableAtPsStoreKey));
         $this->assertFalse(Key::availableAtDistributor($psStore->slug)->get()->contains($availableAtSteamKey));
+    }
+
+    /** @test */
+    public function many_keys_can_be_created_by_request()
+    {
+        $platform = factory(Platform::class)->create();
+        $game = factory(Game::class)->state('test')->create(['platform_id' => $platform]);
+        $distributor = factory(Distributor::class)->state('test')->create(['platform_id' => $platform]);
+        $keys = ['HGSD-235A-HSDH-HKS9', 'HGSD-235A-HSDH-HKS8'];
+
+        $request = new Request();
+        $request->replace(compact('game', 'distributor', 'keys'));
+        $request->setUserResolver(function (){
+            return factory(User::class)->state('seller')->create();
+        });
+        $keys = Key::createManyByRequest($request);
+
+        $this->assertDatabaseHas('keys', ['serial_number' => $keys->first()->serial_number]);
+        $this->assertDatabaseHas('keys', ['serial_number' => $keys->second()->serial_number]);
     }
 }

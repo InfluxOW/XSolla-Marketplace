@@ -16,7 +16,14 @@ class BillingRequest extends FormRequest
     {
         return [
             'card' => ['required', 'integer', new LuhnRule()],
-            'payment_session_token' => ['required', 'string', 'min:30', 'max:100']
+            'payment_session_token' => ['required', 'string', 'min:30', 'max:100', 'exists:purchases,payment_session_token']
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'payment_session_token' => $this->payment_session_token
+        ]);
     }
 }

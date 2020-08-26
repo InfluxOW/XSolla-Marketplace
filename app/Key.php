@@ -2,8 +2,10 @@
 
 namespace App;
 
+use http\Exception\InvalidArgumentException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 class Key extends Model
 {
@@ -33,6 +35,27 @@ class Key extends Model
     public function purchases()
     {
         return $this->hasMany(Purchase::class);
+    }
+
+    /*
+     * Helpers
+     * */
+
+    public static function createManyByRequest(Request $request)
+    {
+        if (isset($request->keys, $request->game, $request->distributor) && $request->user()) {
+            return collect($request->keys)->map(function ($serial) use ($request) {
+                $key = self::make(['serial_number' => $serial]);
+                $key->owner()->associate($request->user());
+                $key->game()->associate($request->game);
+                $key->distributor()->associate($request->distributor);
+                $key->save();
+
+                return $key;
+            });
+        }
+
+        throw new InvalidArgumentException("Your request doesn't have enough arguments. It should contains keys, game, distributor.");
     }
 
     /*

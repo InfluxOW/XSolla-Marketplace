@@ -56,6 +56,11 @@ class User extends Authenticatable
         $query->where('role', 'seller');
     }
 
+    public function keys()
+    {
+        return $this->hasMany(Key::class, 'owner_id');
+    }
+
     public function sales()
     {
         return $this->hasManyThrough(Purchase::class, Key::class, 'owner_id');
