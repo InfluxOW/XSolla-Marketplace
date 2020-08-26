@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Events\PurchaseConfirmed;
+use App\Jobs\NotifySellerAboutSoldKey;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -43,6 +44,7 @@ class Purchase extends Model
         $this->update(['confirmed_at' => now()]);
 
         PurchaseConfirmed::dispatch($this);
+        NotifySellerAboutSoldKey::dispatch($this);
     }
 
     /*

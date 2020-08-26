@@ -3,11 +3,16 @@
 namespace Tests\Integration;
 
 use App\Events\PurchaseConfirmed;
+use App\Jobs\NotifySellerAboutSoldKey;
 use App\Key;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class UserPurchaseTest extends TestCase
@@ -63,7 +68,7 @@ class UserPurchaseTest extends TestCase
     }
 
     /** @test */
-    public function when_purchase_is_confirmed_seller_balance_is_increased()
+    public function seller_balance_is_increased_after_purchase_confirmation()
     {
         $key = factory(Key::class)->state('test')->create();
         $purchase = $this->buyer->reserve($key);
@@ -71,5 +76,33 @@ class UserPurchaseTest extends TestCase
         $this->assertEquals(0, $key->owner->balance);
         $purchase->confirm();
         $this->assertEquals($key->game->getPriceIncludingCommission(), $key->fresh()->owner->balance);
+    }
+
+    /** @test */
+    public function purchase_confirmation_dispatches_notify_seller_about_sold_key_job()
+    {
+        Queue::fake();
+
+        $key = factory(Key::class)->state('test')->create();
+        $purchase = $this->buyer->reserve($key);
+        $purchase->confirm();
+
+        Queue::assertPushed(NotifySellerAboutSoldKey::class);
+    }
+
+    /** @test */
+    public function seller_receives_message_to_his_server_after_purchase_confirmation()
+    {
+        $key = factory(Key::class)->state('test')->create();
+        $purchase = $this->buyer->reserve($key);
+
+        Http::fake([
+            '*' => Http::response([], 201),
+        ]);
+
+        Log::shouldReceive('info')
+            ->once();
+
+        $purchase->confirm();
     }
 }
