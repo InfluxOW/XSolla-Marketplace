@@ -82,6 +82,18 @@ class GamesTest extends TestCase
     }
 
     /** @test */
+    public function game_can_not_be_stored_twice()
+    {
+        $seller = factory(User::class)->state('seller')->create();
+        $game = factory(Game::class)->state('test')->create();
+
+        $this->actingAs($seller, 'api')
+            ->post(route('games.store'), ['name' => $game->name, 'price' => $game->price, 'platform' => $game->platform->slug])
+            ->assertRedirect();
+        $this->assertDatabaseCount('games', $this->games->count() + 1);
+    }
+
+    /** @test */
     public function an_unauthorized_user_can_not_store_a_new_game()
     {
         $this->post(route('games.store'), [])

@@ -17,7 +17,7 @@ class GamesRequest extends FormRequest
             'name' => ['required', 'string', 'min:3', 'max:255'],
             'description' => ['nullable', 'string'],
             'price' => ['required', 'integer', 'min:0'],
-            'platform' => ['required', 'string', 'exists:platforms,slug'],
+            'platform' => ['required', 'string', 'exists:platforms,name'],
         ];
     }
 }

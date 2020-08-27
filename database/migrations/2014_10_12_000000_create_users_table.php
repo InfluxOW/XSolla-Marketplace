@@ -18,10 +18,10 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('username')->unique();
             $table->string('email')->unique();
-            $table->unsignedInteger('balance')->default(0);
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('role', ['seller', 'buyer']);
+            $table->unsignedInteger('balance')->default(0);
+            $table->timestamp('email_verified_at')->nullable();
             $table->timestamps();
         });
     }
