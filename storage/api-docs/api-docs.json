@@ -19,7 +19,7 @@
         "/login": {
             "post": {
                 "tags": [
-                    "auth"
+                    "Authentication"
                 ],
                 "summary": "Sign In",
                 "description": "Login by email and password",
@@ -94,7 +94,7 @@
         "/register": {
             "post": {
                 "tags": [
-                    "auth"
+                    "Authentication"
                 ],
                 "summary": "Register",
                 "description": "Register a new user",
@@ -207,11 +207,85 @@
         "/games": {
             "get": {
                 "tags": [
-                    "games"
+                    "Games"
                 ],
                 "summary": "Games Index",
                 "description": "View all games",
                 "operationId": "gamesIndex",
+                "parameters": [
+                    {
+                        "name": "filter[platform]",
+                        "in": "query",
+                        "description": "Filter games by platform:slug",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[distributor]",
+                        "in": "query",
+                        "description": "Filter games by distributor:slug",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[available]",
+                        "in": "query",
+                        "description": "Leave only games that are available for purchase",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "filter[available_at]",
+                        "in": "query",
+                        "description": "Leave only games that are available for purchase at the specified distributor:slug",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[price_lte]",
+                        "in": "query",
+                        "description": "Leave only games that costs less or equals to the specified price",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[price_gte]",
+                        "in": "query",
+                        "description": "Leave only games that costs more or equals to the specified price",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort games by one of the available params: price, name or platform. Default sort direction is ASC. To apply DESC sort add '-' symbol before the param name.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Results page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Games were fetched",
@@ -243,7 +317,7 @@
             },
             "post": {
                 "tags": [
-                    "games"
+                    "Games"
                 ],
                 "summary": "Games Store",
                 "description": "Store a new game",
@@ -338,7 +412,7 @@
         "/games/{game:slug}": {
             "get": {
                 "tags": [
-                    "games"
+                    "Games"
                 ],
                 "summary": "Games Show",
                 "description": "View specified game",

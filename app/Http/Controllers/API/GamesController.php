@@ -23,6 +23,78 @@ class GamesController extends Controller
      * description="View all games",
      * operationId="gamesIndex",
      * tags={"Games"},
+     *  @OA\Parameter(
+     *    name="filter[platform]",
+     *    in="query",
+     *    description="Filter games by platform:slug",
+     *    required=false,
+     *    @OA\Schema(
+     *         type="string"
+     *    )
+     *  ),
+     *  @OA\Parameter(
+     *    name="filter[distributor]",
+     *    in="query",
+     *    description="Filter games by distributor:slug",
+     *    required=false,
+     *    @OA\Schema(
+     *         type="string"
+     *    )
+     *  ),
+     *  @OA\Parameter(
+     *    name="filter[available]",
+     *    in="query",
+     *    description="Leave only games that are available for purchase",
+     *    required=false,
+     *    @OA\Schema(
+     *         type="boolean"
+     *    )
+     *  ),
+     *  @OA\Parameter(
+     *    name="filter[available_at]",
+     *    in="query",
+     *    description="Leave only games that are available for purchase at the specified distributor:slug",
+     *    required=false,
+     *    @OA\Schema(
+     *         type="string"
+     *    )
+     *  ),
+     *  @OA\Parameter(
+     *    name="filter[price_lte]",
+     *    in="query",
+     *    description="Leave only games that costs less or equals to the specified price",
+     *    required=false,
+     *    @OA\Schema(
+     *         type="integer"
+     *    )
+     *  ),
+     *  @OA\Parameter(
+     *    name="filter[price_gte]",
+     *    in="query",
+     *    description="Leave only games that costs more or equals to the specified price",
+     *    required=false,
+     *    @OA\Schema(
+     *         type="integer"
+     *    )
+     *  ),
+     *  @OA\Parameter(
+     *    name="sort",
+     *    in="query",
+     *    description="Sort games by one of the available params: price, name or platform. Default sort direction is ASC. To apply DESC sort add '-' symbol before the param name.",
+     *    required=false,
+     *    @OA\Schema(
+     *         type="string"
+     *    )
+     *  ),
+     *  @OA\Parameter(
+     *    name="page",
+     *    in="query",
+     *    description="Results page",
+     *    required=false,
+     *    @OA\Schema(
+     *         type="integer"
+     *    )
+     *  ),
      * @OA\Response(
      *    response=200,
      *    description="Games were fetched",
