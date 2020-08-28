@@ -204,6 +204,44 @@
                 }
             }
         },
+        "/distributors": {
+            "get": {
+                "tags": [
+                    "Distributors"
+                ],
+                "summary": "Distributors Index",
+                "description": "View all distributors",
+                "operationId": "distributorsIndex",
+                "responses": {
+                    "200": {
+                        "description": "Distributors were fetched",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "distributors": {
+                                            "properties": {
+                                                "0": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "$ref": "#/components/schemas/DistributorResource"
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                }
+                                            },
+                                            "type": "object",
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/games": {
             "get": {
                 "tags": [
@@ -452,16 +490,285 @@
                     }
                 }
             }
+        },
+        "/platforms": {
+            "get": {
+                "tags": [
+                    "Platforms"
+                ],
+                "summary": "Platforms Index",
+                "description": "View all platforms",
+                "operationId": "platformsIndex",
+                "responses": {
+                    "200": {
+                        "description": "Platforms were fetched",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "platforms": {
+                                            "properties": {
+                                                "0": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "$ref": "#/components/schemas/PlatformResource"
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                }
+                                            },
+                                            "type": "object",
+                                            "collectionFormat": "multi"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/games/{game:slug}/{distributor:slug}/purchase": {
+            "post": {
+                "tags": [
+                    "Purchases"
+                ],
+                "summary": "Purchase a key",
+                "description": "Purchase a key for the specific game at the specific distributor",
+                "operationId": "purchaseStore",
+                "parameters": [
+                    {
+                        "name": "game:slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "distributor:slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Keys has been reserved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You have successfully reserved a key for the game 'The Witcher 3: Wild Hunt' at Steam. To initialize payment send HTTP POST request with your card credentials and payment session token to the billing provider."
+                                        },
+                                        "payment_session_token": {
+                                            "type": "string",
+                                            "example": "$2y$04$1rS6a2vh9ePY.mjg0I1gTeCskbl/jTy65DOTDDY/P6n4yvL3J4LcK"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "No available keys",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "type": "string",
+                                        "example": "Selected game has no available keys at the specified distributor."
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "You should be authorized to access the endpoint"
+                    },
+                    "403": {
+                        "description": "You don't have permissions to access the endpoint"
+                    },
+                    "404": {
+                        "description": "Specified game or distributor were not been found"
+                    }
+                },
+                "security": [
+                    {
+                        "access_token": []
+                    }
+                ]
+            }
+        },
+        "/games/{game:slug}/{distributor:slug}/sell": {
+            "post": {
+                "tags": [
+                    "Keys"
+                ],
+                "summary": "Sell keys",
+                "description": "Sell keys for the specific game at the specific distributor",
+                "operationId": "keysStore",
+                "parameters": [
+                    {
+                        "name": "game:slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "distributor:slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Keys data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "keys"
+                                ],
+                                "properties": {
+                                    "keys": {
+                                        "type": "string[]",
+                                        "example": [
+                                            "HG5D-SXC2-KNB5-M2K2",
+                                            "JSD6-SDXC-664H-9JJ2"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Keys has been put on sale",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "type": "string",
+                                        "example": "You have successfully put up for sale keys for the game The Witcher 3: Wild Hunt at distributor Steam!"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Keys has not been stored due to validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": [
+                                                            "Keys attribute is required."
+                                                        ]
+                                                    },
+                                                    "collectionFormat": "multi"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "You should be authorized to access the endpoint"
+                    },
+                    "403": {
+                        "description": "You don't have permissions to access the endpoint"
+                    },
+                    "404": {
+                        "description": "Specified game or distributor were not been found"
+                    }
+                },
+                "security": [
+                    {
+                        "access_token": []
+                    }
+                ]
+            }
         }
     },
     "components": {
         "schemas": {
+            "DistributorResource": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "Steam"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "steam"
+                    },
+                    "platform": {
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "PC"
+                    },
+                    "total_games": {
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "5"
+                    },
+                    "available_games": {
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "2"
+                    },
+                    "link": {
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "http://localhost:8000/api/games?filter%5Bdistributor%5D=steam"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "DistributorResource"
+                }
+            },
             "GameResource": {
                 "properties": {
                     "name": {
                         "type": "string",
                         "readOnly": "true",
                         "example": "The Witcher 3: Wild Hunt"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "the-witcher-3-wild-hunt"
                     },
                     "description": {
                         "type": "string",
@@ -495,6 +802,42 @@
                 "type": "object",
                 "xml": {
                     "name": "GameResource"
+                }
+            },
+            "PlatformResource": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "PC"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "pc"
+                    },
+                    "total_games": {
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "5"
+                    },
+                    "link": {
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "http://localhost:8000/api/games?filter%5Bplatform%5D=pc"
+                    },
+                    "distributors": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "$ref": "#/components/schemas/DistributorResource"
+                        },
+                        "readOnly": "true"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "PlatformResource"
                 }
             },
             "UserResource": {

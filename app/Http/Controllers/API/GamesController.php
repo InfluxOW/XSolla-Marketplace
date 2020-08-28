@@ -14,7 +14,6 @@ class GamesController extends Controller
     public function __construct()
     {
         $this->middleware(['auth:api', 'seller'])->only('store');
-        $this->middleware(['auth:api'])->only('index');
     }
 
     /**

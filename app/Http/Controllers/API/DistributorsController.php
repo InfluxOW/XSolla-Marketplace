@@ -8,6 +8,36 @@ use App\Http\Resources\DistributorResource;
 
 class DistributorsController extends Controller
 {
+    /**
+     * @OA\Get(
+     * path="/distributors",
+     * summary="Distributors Index",
+     * description="View all distributors",
+     * operationId="distributorsIndex",
+     * tags={"Distributors"},
+     * @OA\Response(
+     *    response=200,
+     *    description="Distributors were fetched",
+     *     @OA\JsonContent(
+     *     @OA\Property(
+     *      property="distributors",
+     *      type="object",
+     *      collectionFormat="multi",
+     *       @OA\Property(
+     *         property="0",
+     *         type="array",
+     *         collectionFormat="multi",
+     *         @OA\Items(
+     *           type="object",
+     *           ref="#/components/schemas/DistributorResource",
+     *        )
+     *      ),
+     *    )
+     *   )
+     *  ),
+     * )
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
     public function index()
     {
         $distributors = Distributor::with('games', 'platform')->get();
