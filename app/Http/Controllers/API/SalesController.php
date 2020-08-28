@@ -17,10 +17,10 @@ class SalesController extends Controller
     /**
      * @OA\Post(
      * path="/games/{game:slug}/{distributor:slug}/sell",
-     * summary="Sell keys",
+     * summary="Sell a key or keys",
      * description="Sell keys for the specific game at the specific distributor",
      * operationId="keysStore",
-     * tags={"Keys"},
+     * tags={"Sales"},
      * security={
      *   {"access_token": {}},
      * },

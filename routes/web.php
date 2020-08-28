@@ -1,6 +1,8 @@
 <?php
 
+use App\Mail\SendKeyToTheBuyer;
 use App\Providers\RouteServiceProvider;
+use App\Purchase;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,4 +18,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect(RouteServiceProvider::HOME);
+});
+
+Route::get('mailable', function () {
+    return new SendKeyToTheBuyer(Purchase::find(1));
 });

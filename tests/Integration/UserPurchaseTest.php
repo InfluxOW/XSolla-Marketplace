@@ -64,10 +64,11 @@ class UserPurchaseTest extends TestCase
     {
         $key = factory(Key::class)->state('test')->create();
         $purchase = $this->buyer->reserve($key);
-
-        Bus::fake();
         Event::fake();
+        Bus::fake();
+
         $purchase->confirm();
+
         Event::assertDispatched(PurchaseConfirmed::class);
     }
 
@@ -76,10 +77,12 @@ class UserPurchaseTest extends TestCase
     {
         $key = factory(Key::class)->state('test')->create();
         $purchase = $this->buyer->reserve($key);
-
         Bus::fake();
+
         $this->assertEquals(0, $key->owner->balance);
+
         $purchase->confirm();
+
         $this->assertEquals($key->game->getPriceIncludingCommission(), $key->fresh()->owner->balance);
     }
 

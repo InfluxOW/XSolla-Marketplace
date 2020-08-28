@@ -290,6 +290,54 @@
                 ]
             }
         },
+        "/user/{user:username}/sales": {
+            "post": {
+                "tags": [
+                    "Fake External Services"
+                ],
+                "summary": "User Server",
+                "description": "Send information about purchase to the user server. It should not be done manually, because it's done automatically on purchase confirmation or by the scheduled job. This server responses with an error with 50% chance.",
+                "operationId": "userSalesStore",
+                "parameters": [
+                    {
+                        "name": "user:username",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Message",
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "example": "Any data to send to the server for testing it."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Key sale has been processed."
+                    },
+                    "503": {
+                        "description": "Whops, something went wrong. Try again later."
+                    },
+                    "404": {
+                        "description": "Specified user has not been found"
+                    }
+                }
+            }
+        },
         "/games": {
             "get": {
                 "tags": [
@@ -657,9 +705,9 @@
         "/games/{game:slug}/{distributor:slug}/sell": {
             "post": {
                 "tags": [
-                    "Keys"
+                    "Sales"
                 ],
-                "summary": "Sell keys",
+                "summary": "Sell a key or keys",
                 "description": "Sell keys for the specific game at the specific distributor",
                 "operationId": "keysStore",
                 "parameters": [

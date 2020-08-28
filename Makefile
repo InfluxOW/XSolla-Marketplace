@@ -16,6 +16,6 @@ docs:
 	php artisan ide-helper:models
 	php artisan ide-helper:meta
 lint:
-	composer exec phpcs app database routes tests -v
+	composer exec phpcs -v
 lint-fix:
-	composer exec phpcbf app database routes tests -v
+	composer exec phpcbf -v
