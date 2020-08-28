@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Game;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GamesRequest;
-use App\Http\Resources\GamesResource;
+use App\Http\Resources\GameResource;
 use App\Platform;
 use App\Repositories\GameRepository;
 
@@ -14,6 +14,7 @@ class GamesController extends Controller
     public function __construct()
     {
         $this->middleware(['auth:api', 'seller'])->only('store');
+        $this->middleware(['auth:api'])->only('index');
     }
 
     /**
@@ -109,7 +110,7 @@ class GamesController extends Controller
      *         collectionFormat="multi",
      *         @OA\Items(
      *           type="object",
-     *           ref="#/components/schemas/Game",
+     *           ref="#/components/schemas/GameResource",
      *        )
      *      ),
      *    )
@@ -122,7 +123,7 @@ class GamesController extends Controller
     {
         $games = GameRepository::getGamesForIndexPage();
 
-        return GamesResource::collection($games);
+        return GameResource::collection($games);
     }
 
     /**
@@ -150,7 +151,7 @@ class GamesController extends Controller
      *    response=302,
      *    description="Game has been stored",
      *    @OA\JsonContent(
-     *       @OA\Items(type="object", ref="#/components/schemas/Game"),
+     *       @OA\Items(type="object", ref="#/components/schemas/GameResource"),
      *    )
      *     ),
      * @OA\Response(
@@ -167,11 +168,19 @@ class GamesController extends Controller
      *              collectionFormat="multi",
      *              @OA\Items(
      *                 type="string",
-     *                 example={"Name attribute is reqired."},
+     *                 example={"Name attribute is required."},
      *              )
      *           )
      *        )
      *     )
+     *  ),
+     *  @OA\Response(
+     *      response=401,
+     *      description="You should be authorized to access the endpoint",
+     *  ),
+     *  @OA\Response(
+     *      response=403,
+     *      description="You don't have permissions to access the endpoint",
      *  )
      * )
      * @param \App\Http\Requests\GamesRequest $request
@@ -206,7 +215,7 @@ class GamesController extends Controller
      *     @OA\JsonContent(
      *     @OA\Items(
      *      type="object",
-     *      ref="#/components/schemas/Game",
+     *      ref="#/components/schemas/GameResource",
      *    )
      *   )
      *  ),
@@ -216,10 +225,10 @@ class GamesController extends Controller
      *   ),
      * )
      * @param \App\Game $game
-     * @return \App\Http\Resources\GamesResource
+     * @return \App\Http\Resources\GameResource
      */
     public function show(Game $game)
     {
-        return new GamesResource($game->load('keys.distributor', 'keys.purchases', 'platform'));
+        return new GameResource($game->load('keys.distributor', 'keys.purchases', 'platform'));
     }
 }

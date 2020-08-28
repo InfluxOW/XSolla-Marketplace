@@ -60,7 +60,7 @@
                                     "properties": {
                                         "user": {
                                             "type": "object",
-                                            "$ref": "#/components/schemas/User"
+                                            "$ref": "#/components/schemas/UserResource"
                                         },
                                         "access_token": {
                                             "type": "string",
@@ -158,7 +158,7 @@
                                     "properties": {
                                         "user": {
                                             "type": "object",
-                                            "$ref": "#/components/schemas/User"
+                                            "$ref": "#/components/schemas/UserResource"
                                         },
                                         "access_token": {
                                             "type": "string",
@@ -299,7 +299,7 @@
                                                     "type": "array",
                                                     "items": {
                                                         "type": "object",
-                                                        "$ref": "#/components/schemas/Game"
+                                                        "$ref": "#/components/schemas/GameResource"
                                                     },
                                                     "collectionFormat": "multi"
                                                 }
@@ -364,7 +364,7 @@
                                 "schema": {
                                     "items": {
                                         "type": "object",
-                                        "$ref": "#/components/schemas/Game"
+                                        "$ref": "#/components/schemas/GameResource"
                                     }
                                 }
                             }
@@ -387,7 +387,7 @@
                                                     "items": {
                                                         "type": "string",
                                                         "example": [
-                                                            "Name attribute is reqired."
+                                                            "Name attribute is required."
                                                         ]
                                                     },
                                                     "collectionFormat": "multi"
@@ -400,6 +400,12 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "You should be authorized to access the endpoint"
+                    },
+                    "403": {
+                        "description": "You don't have permissions to access the endpoint"
                     }
                 },
                 "security": [
@@ -435,7 +441,7 @@
                                 "schema": {
                                     "items": {
                                         "type": "object",
-                                        "$ref": "#/components/schemas/Game"
+                                        "$ref": "#/components/schemas/GameResource"
                                     }
                                 }
                             }
@@ -450,7 +456,7 @@
     },
     "components": {
         "schemas": {
-            "Game": {
+            "GameResource": {
                 "properties": {
                     "name": {
                         "type": "string",
@@ -488,19 +494,11 @@
                 },
                 "type": "object",
                 "xml": {
-                    "name": "Game"
+                    "name": "GameResource"
                 }
             },
-            "User": {
-                "required": [
-                    "password"
-                ],
+            "UserResource": {
                 "properties": {
-                    "id": {
-                        "type": "integer",
-                        "readOnly": "true",
-                        "example": "1"
-                    },
                     "name": {
                         "type": "string",
                         "readOnly": "true",
@@ -510,16 +508,11 @@
                         "type": "string",
                         "example": "john_doe"
                     },
-                    "balance": {
-                        "type": "integer",
-                        "readOnly": "true",
-                        "example": "0"
-                    },
                     "email": {
                         "type": "string",
                         "format": "email",
                         "readOnly": "true",
-                        "example": "user@gmail.com"
+                        "example": "john_doe@gmail.com"
                     },
                     "role": {
                         "type": "string",
@@ -527,30 +520,33 @@
                             "seller",
                             "buyer"
                         ],
-                        "readOnly": "true"
-                    },
-                    "email_verified_at": {
-                        "type": "string",
-                        "format": "date-time",
                         "readOnly": "true",
-                        "example": "2019-02-25 12:59:20"
+                        "example": "seller"
                     },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
+                    "balance": {
+                        "type": "integer",
                         "readOnly": "true",
-                        "example": "2019-02-25 12:59:20"
+                        "example": "150"
                     },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
+                    "keys_on_sale": {
+                        "type": "integer",
                         "readOnly": "true",
-                        "example": "2019-02-25 12:59:20"
+                        "example": "5"
+                    },
+                    "keys_sold": {
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "keys_purchased": {
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
                     }
                 },
                 "type": "object",
                 "xml": {
-                    "name": "User"
+                    "name": "UserResource"
                 }
             }
         },

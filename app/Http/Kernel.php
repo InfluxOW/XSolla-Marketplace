@@ -5,7 +5,6 @@ namespace App\Http;
 use App\Http\Middleware\AvailableForBuyers;
 use App\Http\Middleware\AvailableForSellers;
 use App\Http\Middleware\ForceJsonResponse;
-use App\Http\Middleware\ProfileJsonResponse;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel

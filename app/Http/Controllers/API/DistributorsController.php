@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Distributor;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\DistributorsResource;
+use App\Http\Resources\DistributorResource;
 
 class DistributorsController extends Controller
 {
@@ -12,6 +12,6 @@ class DistributorsController extends Controller
     {
         $distributors = Distributor::with('games', 'platform')->get();
 
-        return DistributorsResource::collection($distributors);
+        return DistributorResource::collection($distributors);
     }
 }

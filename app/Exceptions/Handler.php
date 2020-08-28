@@ -4,6 +4,9 @@ namespace App\Exceptions;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
@@ -55,6 +58,11 @@ class Handler extends ExceptionHandler
         if ($exception instanceof ModelNotFoundException) {
             return response($exception->getMessage(), 404);
         }
+
+        if ($exception instanceof MethodNotAllowedHttpException && Str::contains(url()->current(), 'login')) {
+            return response("You should be authorized to access the endpoint.", 401);
+        }
+
         return parent::render($request, $exception);
     }
 }
