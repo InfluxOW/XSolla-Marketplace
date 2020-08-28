@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Events\PurchaseConfirmed;
 use App\Purchase;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,13 +10,14 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class NotifySellerAboutSoldKey implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $tries = 3;
-    public $timeout = 60;
+    public $timeout = 10;
     public Purchase $purchase;
 
     public function __construct(Purchase $purchase)
@@ -44,8 +44,7 @@ class NotifySellerAboutSoldKey implements ShouldQueue
         );
 
         if ($response->failed()) {
-            $this->fail();
-            return;
+            throw new HttpException('User server responded with an error.');
         }
 
         Log::info("Purchase {$this->purchase->id} has been proceeded.");

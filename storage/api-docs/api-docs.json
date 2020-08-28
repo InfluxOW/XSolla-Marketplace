@@ -242,6 +242,54 @@
                 }
             }
         },
+        "/payments/confirm": {
+            "post": {
+                "tags": [
+                    "Fake External Services"
+                ],
+                "summary": "Billing Provider",
+                "description": "Confirm a purchase",
+                "operationId": "paymentsConfirm",
+                "requestBody": {
+                    "description": "Purchase data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "payment_session_token",
+                                    "card"
+                                ],
+                                "properties": {
+                                    "payment_session_token": {
+                                        "type": "string",
+                                        "example": "$2y$04$1rS6a2vh9ePY.mjg0I1gTeCskbl/jTy65DOTDDY/P6n4yvL3J4LcK"
+                                    },
+                                    "card": {
+                                        "type": "integer",
+                                        "example": "4425669844123325"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "401": {
+                        "description": "You should be authorized to access the endpoint"
+                    },
+                    "403": {
+                        "description": "You don't have permissions to access the endpoint"
+                    }
+                },
+                "security": [
+                    {
+                        "access_token": []
+                    }
+                ]
+            }
+        },
         "/games": {
             "get": {
                 "tags": [
@@ -596,7 +644,7 @@
                         "description": "You don't have permissions to access the endpoint"
                     },
                     "404": {
-                        "description": "Specified game or distributor were not been found"
+                        "description": "Specified game or distributor was not been found"
                     }
                 },
                 "security": [

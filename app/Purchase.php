@@ -44,7 +44,7 @@ class Purchase extends Model
         $this->update(['confirmed_at' => now()]);
 
         PurchaseConfirmed::dispatch($this);
-        NotifySellerAboutSoldKey::dispatch($this);
+        NotifySellerAboutSoldKey::dispatch($this)->onQueue('notifies');
     }
 
     /*

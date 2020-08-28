@@ -5,6 +5,8 @@ namespace Tests\Unit;
 use App\Key;
 use App\Purchase;
 use App\User;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class PurchaseTest extends TestCase
@@ -44,6 +46,8 @@ class PurchaseTest extends TestCase
         $this->assertFalse($this->purchase->isConfirmed());
         $this->assertTrue($this->purchase->isUnconfirmed());
 
+        Event::fake();
+        Bus::fake();
         $this->purchase->confirm();
 
         $this->assertTrue($this->purchase->isConfirmed());
