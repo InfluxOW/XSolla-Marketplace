@@ -13,3 +13,7 @@ docs:
 	php artisan ide-helper:generate
 	php artisan ide-helper:models
 	php artisan ide-helper:meta
+lint:
+	composer exec phpcs app database routes tests -v
+lint-fix:
+	composer exec phpcbf app database routes tests -v

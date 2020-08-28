@@ -16,7 +16,7 @@ class KeyTest extends TestCase
 {
     protected $key;
 
-    protected function setUp():void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -48,8 +48,8 @@ class KeyTest extends TestCase
 
         $this->assertTrue(
             $this->key->purchases->contains($purchases->first() ||
-            $this->key->purchases->contains($purchases->second())
-        ));
+            $this->key->purchases->contains($purchases->second()))
+        );
         $this->assertInstanceOf(Purchase::class, $this->key->purchases->first());
     }
 
@@ -111,7 +111,7 @@ class KeyTest extends TestCase
 
         $request = new Request();
         $request->replace(compact('game', 'distributor', 'keys'));
-        $request->setUserResolver(function (){
+        $request->setUserResolver(function () {
             return factory(User::class)->state('seller')->create();
         });
         $keys = Key::createManyByRequest($request);

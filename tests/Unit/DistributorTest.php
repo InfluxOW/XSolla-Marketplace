@@ -1,4 +1,6 @@
-<?php /** @noinspection StaticInvocationViaThisInspection */
+<?php
+
+/** @noinspection StaticInvocationViaThisInspection */
 
 namespace Tests\Unit;
 
@@ -12,7 +14,7 @@ class DistributorTest extends TestCase
 {
     protected $distributor;
 
-    protected function setUp():void
+    protected function setUp(): void
     {
         parent::setUp();
 

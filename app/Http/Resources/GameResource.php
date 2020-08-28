@@ -39,7 +39,7 @@ class GameResource extends JsonResource
             'keys',
             $this->keys->groupBy(function ($key) {
                     return $key->distributor->name;
-                })
+            })
                 ->map(function ($keys) {
                     return $keys->filter->isAvailable()->count();
                 })

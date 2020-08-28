@@ -1,4 +1,6 @@
-<?php /** @noinspection StaticInvocationViaThisInspection */
+<?php
+
+/** @noinspection StaticInvocationViaThisInspection */
 
 namespace Tests\Feature;
 

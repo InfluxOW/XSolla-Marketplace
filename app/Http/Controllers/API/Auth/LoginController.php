@@ -58,6 +58,5 @@ class LoginController extends Controller
             ),
             'access_token' => $accessToken
         ], 200);
-
     }
 }

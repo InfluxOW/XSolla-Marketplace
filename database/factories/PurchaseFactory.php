@@ -31,4 +31,3 @@ $factory->afterMaking(Purchase::class, function (Purchase $purchase) {
         $purchase->save();
     }
 });
-

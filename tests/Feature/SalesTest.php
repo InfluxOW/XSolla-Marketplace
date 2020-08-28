@@ -17,7 +17,7 @@ class SalesTest extends TestCase
     protected $seller;
     protected $buyer;
 
-    protected function setUp():void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -32,7 +32,7 @@ class SalesTest extends TestCase
         $game = factory(Game::class)->state('test')->create(['platform_id' => $platform]);
         $distributor = factory(Distributor::class)->state('test')->create(['platform_id' => $platform]);
 
-        $this->post(route('sales.store', compact('game', 'distributor')),[])
+        $this->post(route('sales.store', compact('game', 'distributor')), [])
             ->assertRedirect(route('login'));
 
         $this->actingAs($this->buyer, 'api')->post(
@@ -74,6 +74,5 @@ class SalesTest extends TestCase
             route('sales.store', compact('game', 'distributor')),
             []
         );
-
     }
 }

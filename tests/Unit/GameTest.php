@@ -1,4 +1,6 @@
-<?php /** @noinspection StaticInvocationViaThisInspection */
+<?php
+
+/** @noinspection StaticInvocationViaThisInspection */
 
 namespace Tests\Unit;
 
@@ -14,7 +16,7 @@ class GameTest extends TestCase
 {
     protected $game;
 
-    protected function setUp():void
+    protected function setUp(): void
     {
         parent::setUp();
 

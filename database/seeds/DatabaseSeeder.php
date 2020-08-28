@@ -11,21 +11,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-         switch (app('env')) {
-             case 'production':
-                 $this->call([
-                     DistributorSeeder::class,
-                 ]);
-                 break;
-             default:
-                 $this->call([
-                     UserSeeder::class,
-                     DistributorSeeder::class,
-                     GameSeeder::class,
-                     KeySeeder::class,
-                     PurchaseSeeder::class,
-                 ]);
-                 break;
-         }
+        switch (app('env')) {
+            case 'production':
+                $this->call([
+                    DistributorSeeder::class,
+                ]);
+                break;
+            default:
+                $this->call([
+                    UserSeeder::class,
+                    DistributorSeeder::class,
+                    GameSeeder::class,
+                    KeySeeder::class,
+                    PurchaseSeeder::class,
+                ]);
+                break;
+        }
     }
 }

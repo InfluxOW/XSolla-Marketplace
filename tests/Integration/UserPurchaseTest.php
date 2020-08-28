@@ -19,7 +19,7 @@ class UserPurchaseTest extends TestCase
 {
     protected $buyer;
 
-    protected function setUp():void
+    protected function setUp(): void
     {
         parent::setUp();
 

@@ -14,7 +14,10 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class NotifySellerAboutSoldKey implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     public $tries = 3;
     public $timeout = 10;

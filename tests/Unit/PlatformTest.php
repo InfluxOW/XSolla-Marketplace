@@ -11,7 +11,7 @@ class PlatformTest extends TestCase
 {
     protected $platform;
 
-    protected function setUp():void
+    protected function setUp(): void
     {
         parent::setUp();
 

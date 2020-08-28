@@ -1,4 +1,6 @@
-<?php /** @noinspection StaticInvocationViaThisInspection */
+<?php
+
+/** @noinspection StaticInvocationViaThisInspection */
 
 use App\Purchase;
 use Illuminate\Database\Seeder;

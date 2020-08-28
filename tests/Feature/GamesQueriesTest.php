@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 class GamesQueriesTest extends TestCase
 {
-    protected function setUp():void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->seedData();
