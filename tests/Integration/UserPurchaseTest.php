@@ -4,7 +4,11 @@ namespace Tests\Integration;
 
 use App\Events\PurchaseConfirmed;
 use App\Jobs\NotifySellerAboutSoldKey;
+use App\Jobs\SendMail;
 use App\Key;
+use App\Listeners\PurchaseConfirmed\IncreaseSellerBalance;
+use App\Listeners\PurchaseConfirmed\SendNotifications;
+use App\Mail\SendKeyToTheBuyer;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -12,6 +16,7 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
@@ -24,48 +29,41 @@ class UserPurchaseTest extends TestCase
         parent::setUp();
 
         $this->buyer = factory(User::class)->state('buyer')->create();
+        $this->key = factory(Key::class)->state('test')->create();
     }
 
     /** @test */
     public function user_can_reserve_a_key()
     {
-        $key = factory(Key::class)->state('test')->create();
-
-        $this->assertFalse($key->isReservedBy($this->buyer));
-        $this->buyer->reserve($key);
-        $this->assertTrue($key->fresh()->isReservedBy($this->buyer));
+        $this->assertFalse($this->key->isReservedBy($this->buyer));
+        $this->buyer->reserve($this->key);
+        $this->assertTrue($this->key->fresh()->isReservedBy($this->buyer));
     }
 
     /** @test */
     public function key_keeps_being_available_when_user_reserves_it()
     {
-        $key = factory(Key::class)->state('test')->create();
-
-        $this->assertTrue($key->isAvailable());
-        $this->buyer->reserve($key);
-        $this->assertTrue($key->isAvailable());
+        $this->assertTrue($this->key->isAvailable());
+        $this->buyer->reserve($this->key);
+        $this->assertTrue($this->key->isAvailable());
     }
 
     /** @test */
     public function reserved_key_becomes_unavailable_once_user_confirms_purchase()
     {
-        $key = factory(Key::class)->state('test')->create();
-        $purchase = $this->buyer->reserve($key);
-
+        $purchase = $this->buyer->reserve($this->key);
         Event::fake();
-        Bus::fake();
+
         $purchase->confirm();
 
-        $this->assertFalse($key->isAvailable());
+        $this->assertFalse($this->key->isAvailable());
     }
 
     /** @test */
-    public function purchase_confirmation_fires_key_purchased_event()
+    public function purchase_confirmation_fires_purchase_confirmed_event()
     {
-        $key = factory(Key::class)->state('test')->create();
-        $purchase = $this->buyer->reserve($key);
+        $purchase = $this->buyer->reserve($this->key);
         Event::fake();
-        Bus::fake();
 
         $purchase->confirm();
 
@@ -73,44 +71,92 @@ class UserPurchaseTest extends TestCase
     }
 
     /** @test */
-    public function seller_balance_is_increased_after_purchase_confirmation()
+    public function purchase_confirmation_triggers_increase_seller_balance_listener()
     {
-        $key = factory(Key::class)->state('test')->create();
-        $purchase = $this->buyer->reserve($key);
-        Bus::fake();
+        $purchase = $this->buyer->reserve($this->key);
+        Event::fake(PurchaseConfirmed::class);
+
+        $purchase->confirm();
+
+        $listener = \Mockery::mock(IncreaseSellerBalance::class);
+        $listener->shouldReceive('handle');
+    }
+
+    /** @test */
+    public function increase_seller_balance_listener_increases_seller_balance()
+    {
+        $event = $this->mockPurchaseConfirmedEvent();
+        $key = $event->purchase->key;
 
         $this->assertEquals(0, $key->owner->balance);
 
-        $purchase->confirm();
+        $listener = app()->make(IncreaseSellerBalance::class);
+        $listener->handle($event);
 
         $this->assertEquals($key->game->getPriceIncludingCommission(), $key->fresh()->owner->balance);
     }
 
     /** @test */
-    public function purchase_confirmation_dispatches_notify_seller_about_sold_key_job()
+    public function purchase_confirmation_triggers_send_notifications_listener()
     {
-        Queue::fake();
+        $purchase = $this->buyer->reserve($this->key);
+        Event::fake(PurchaseConfirmed::class);
 
-        $key = factory(Key::class)->state('test')->create();
-        $purchase = $this->buyer->reserve($key);
         $purchase->confirm();
 
-        Queue::assertPushed(NotifySellerAboutSoldKey::class);
+        $listener = \Mockery::mock(SendNotifications::class);
+        $listener->shouldReceive('handle');
     }
 
     /** @test */
-    public function seller_receives_message_to_his_server_after_purchase_confirmation()
+    public function send_notifications_listener_dispatches_notify_seller_about_sold_key_and_send_mail_jobs()
     {
-        $key = factory(Key::class)->state('test')->create();
-        $purchase = $this->buyer->reserve($key);
+        $event = $this->mockPurchaseConfirmedEvent();
+
+        Queue::fake();
+
+        $listener = app()->make(SendNotifications::class);
+        $listener->handle($event);
+
+        Queue::assertPushed(NotifySellerAboutSoldKey::class);
+        Queue::assertPushed(SendMail::class);
+    }
+
+    /** @test */
+    public function notify_seller_about_sold_key_job_sends_http_request_to_seller_server()
+    {
+        $purchase = $this->buyer->reserve($this->key);
 
         Http::fake([
             '*' => Http::response([], 201),
         ]);
 
-        Log::shouldReceive('info')
-            ->once();
+        NotifySellerAboutSoldKey::dispatch($purchase);
 
-        $purchase->confirm();
+        Http::assertSentCount(1);
+    }
+
+    /** @test */
+    public function send_notifications_listener_dispatches_send_mail_job_with_purchase_buyer_and_send_key_to_the_buyer_mailable()
+    {
+        $event = $this->mockPurchaseConfirmedEvent();
+        $listener = app()->make(SendNotifications::class);
+
+        Bus::fake(NotifySellerAboutSoldKey::class);
+        Mail::fake();
+
+        $listener->handle($event);
+
+        Mail::assertSent(SendKeyToTheBuyer::class);
+    }
+
+    protected function mockPurchaseConfirmedEvent()
+    {
+        $purchase = $this->buyer->reserve($this->key);
+
+        $event = \Mockery::mock(PurchaseConfirmed::class);
+        $event->purchase = $purchase;
+
+        return $event;
     }
 }

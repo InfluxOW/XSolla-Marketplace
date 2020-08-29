@@ -47,7 +47,7 @@ class NotifySellerAboutSoldKey implements ShouldQueue
         );
 
         if ($response->failed()) {
-            throw new HttpException('User server responded with an error.');
+            throw new HttpException(503, 'User server responded with an error.');
         }
 
         Log::info("Purchase {$this->purchase->id} has been proceeded.");

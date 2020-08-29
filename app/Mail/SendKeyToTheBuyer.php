@@ -22,7 +22,6 @@ class SendKeyToTheBuyer extends Mailable
     public function build()
     {
         return $this
-            ->from('admin@marketplace.xsolla')
             ->subject("You have new key purchased!")
             ->markdown('emails.new-key-purchased');
     }
