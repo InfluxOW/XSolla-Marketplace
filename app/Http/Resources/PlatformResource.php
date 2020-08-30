@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Cache;
 
 /**
  *
@@ -25,7 +26,12 @@ class PlatformResource extends JsonResource
             'slug' => $this->slug,
             'total_games' =>  $this->whenLoaded('games', $this->games->count()),
             'link' => route('games.index', ['filter[platform]' => $this->resource->slug]),
-            'distributors' => $this->whenLoaded('distributors', DistributorResource::collection($this->distributors)),
+            'distributors' => DistributorResource::collection($this->distributors()),
         ];
+    }
+
+    protected function distributors()
+    {
+        return Cache::has('distributors') ? Cache::get('distributors')->where('platform_id', $this->resource->id) : $this->distributors;
     }
 }

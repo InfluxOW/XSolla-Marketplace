@@ -2,16 +2,22 @@
 
 namespace App;
 
-use http\Exception\InvalidArgumentException;
+use App\Http\Requests\SalesRequest;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class Key extends Model
 {
     protected $fillable = ['serial_number'];
-    protected $appends = ['isAvailable'];
-    protected $touches = ['game'];
+
+    protected static function booted()
+    {
+        static::created(function () {
+            Cache::delete('distributors');
+        });
+    }
 
     /*
      * Relations
@@ -41,21 +47,17 @@ class Key extends Model
      * Helpers
      * */
 
-    public static function createManyByRequest(Request $request)
+    public static function createManyByRequest(SalesRequest $request)
     {
-        if (isset($request->keys, $request->game, $request->distributor) && $request->user()) {
-            return collect($request->keys)->map(function ($serial) use ($request) {
-                $key = self::make(['serial_number' => $serial]);
-                $key->owner()->associate($request->user());
-                $key->game()->associate($request->game);
-                $key->distributor()->associate($request->distributor);
-                $key->save();
+        return collect($request->keys)->map(function ($serial) use ($request) {
+            $key = self::make(['serial_number' => $serial]);
+            $key->owner()->associate($request->user());
+            $key->game()->associate($request->game);
+            $key->distributor()->associate($request->distributor);
+            $key->save();
 
-                return $key;
-            });
-        }
-
-        throw new InvalidArgumentException("Your request doesn't have enough arguments. It should contains keys, game, distributor.");
+            return $key;
+        });
     }
 
     /*
@@ -80,14 +82,13 @@ class Key extends Model
 
     public function scopeAvailableAtDistributor(Builder $query, $distributor): Builder
     {
-        $distributor = Distributor::whereSlug($distributor)->firstOrFail();
+        $distributor = (Cache::get('distributors') ?? Distributor::all())->firstWhere('slug', $distributor);
+
+        if (is_null($distributor)) {
+            throw new InvalidArgumentException('Distributor with specified slug has not been found');
+        }
 
         return $query->available()->where('distributor_id', $distributor->id);
-    }
-
-    public function getIsAvailableAttribute()
-    {
-        return $this->isAvailable();
     }
 
     public function isAvailable()

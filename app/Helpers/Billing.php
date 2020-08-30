@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Billing
 {
-    public static function generatePaymentToken(Model $product, string $email, int $price): string
+    public static function generatePaymentSessionToken(Model $product, string $email, int $price): string
     {
         $timestamp = now()->timestamp;
         $key = $product->getKey();

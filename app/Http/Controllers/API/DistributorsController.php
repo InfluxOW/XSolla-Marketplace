@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Distributor;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DistributorResource;
+use Illuminate\Support\Facades\Cache;
 
 class DistributorsController extends Controller
 {
@@ -40,7 +41,9 @@ class DistributorsController extends Controller
      */
     public function index()
     {
-        $distributors = Distributor::with('games', 'platform')->get();
+        $distributors = Cache::rememberForever('distributors', function () {
+            return Distributor::with('games', 'platform')->get();
+        });
 
         return DistributorResource::collection($distributors);
     }

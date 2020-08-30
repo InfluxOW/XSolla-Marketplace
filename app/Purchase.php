@@ -5,6 +5,7 @@ namespace App;
 use App\Events\PurchaseConfirmed;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Purchase extends Model
 {
@@ -14,6 +15,13 @@ class Purchase extends Model
         'confirmed_at' => 'datetime',
     ];
     protected $hidden = ['payment_session_token'];
+
+    protected static function booted()
+    {
+        static::updated(function () {
+            Cache::delete('distributors');
+        });
+    }
 
     /*
      * Relations

@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Distributor;
 use App\Game;
+use App\Http\Requests\SalesRequest;
 use App\Key;
 use App\Platform;
 use App\Purchase;
@@ -109,7 +110,7 @@ class KeyTest extends TestCase
         $distributor = factory(Distributor::class)->state('test')->create(['platform_id' => $platform]);
         $keys = ['HGSD-235A-HSDH-HKS9', 'HGSD-235A-HSDH-HKS8'];
 
-        $request = new Request();
+        $request = new SalesRequest();
         $request->replace(compact('game', 'distributor', 'keys'));
         $request->setUserResolver(function () {
             return factory(User::class)->state('seller')->create();

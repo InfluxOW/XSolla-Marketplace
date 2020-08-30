@@ -3,20 +3,29 @@
 namespace App;
 
 use App\Exceptions\NoAvailableKeysException;
+use App\Http\Requests\GamesRequest;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class Game extends Model
 {
     use Sluggable;
 
     protected $fillable = ['name', 'description', 'price'];
-    protected $appends = ['isAvailable'];
     protected $with = ['keys'];
     protected $casts = [
         'price' => 'integer'
     ];
+
+    protected static function booted()
+    {
+        static::created(function () {
+            Cache::delete('platforms');
+        });
+    }
 
     /*
      * Relations
@@ -81,9 +90,15 @@ class Game extends Model
         return $this->keys->filter->isAvailable()->count() > 0;
     }
 
-    public function getIsAvailableAttribute()
+    /*
+     * Helpers
+     * */
+
+    public static function createByRequest(GamesRequest $request)
     {
-        return $this->isAvailable();
+        $platform = (Cache::get('platforms') ?? Platform::all())->firstWhere('name', $request->platform);
+
+        return $platform->games()->firstOrCreate($request->except('platform'));
     }
 
     /*

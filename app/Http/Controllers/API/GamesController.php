@@ -187,8 +187,7 @@ class GamesController extends Controller
      */
     public function store(GamesRequest $request)
     {
-        $platform = Platform::whereName($request->platform)->first();
-        $game = $platform->games()->firstOrCreate($request->except('platform'));
+        $game = Game::createByRequest($request);
 
         return redirect()->route('games.show', compact('game'));
     }

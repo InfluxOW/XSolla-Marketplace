@@ -21,7 +21,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'username', 'email', 'password', 'role', 'email_verified_at', 'remember_token'
+        'name', 'username', 'email', 'password', 'role',
     ];
 
     /**
@@ -30,7 +30,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'email_verified_at'
     ];
 
     /**
@@ -89,7 +89,7 @@ class User extends Authenticatable
     {
         return tap($this->purchases()->make(), function ($purchase) use ($key) {
             $purchase->key()->associate($key);
-            $purchase->payment_session_token = Billing::generatePaymentToken($key, $this->email, $key->game->price);
+            $purchase->payment_session_token = Billing::generatePaymentSessionToken($key, $this->email, $key->game->price);
             $purchase->save();
         });
     }
