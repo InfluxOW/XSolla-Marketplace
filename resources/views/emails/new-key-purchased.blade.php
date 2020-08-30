@@ -1,7 +1,7 @@
 @component('mail::message')
     # You have a new key!
 
-    Hi {{ $purchase->buyer->name }}!
+    Hi {{ $purchase->payer->name }}!
 
     You have new key purchased... Here it is!
 

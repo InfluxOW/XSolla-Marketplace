@@ -17,8 +17,8 @@ class PurchasesController extends Controller
     /**
      * @OA\Post(
      * path="/games/{game:slug}/{distributor:slug}/purchase",
-     * summary="Payment a key",
-     * description="Payment a key for the specific game at the specific distributor",
+     * summary="Purchase a key",
+     * description="Purchase a key for the specific game at the specific distributor",
      * operationId="purchaseStore",
      * tags={"Purchases"},
      * security={

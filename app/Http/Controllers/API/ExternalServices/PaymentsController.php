@@ -33,6 +33,10 @@ class PaymentsController extends Controller
      *    ),
      * ),
      *  @OA\Response(
+     *      response=200,
+     *      description="Your payment is successfully proceeded! Key has been to your email.",
+     *  ),
+     *  @OA\Response(
      *      response=401,
      *      description="You should be authorized to access the endpoint",
      *  ),
