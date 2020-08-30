@@ -26,6 +26,7 @@
         "laravel/passport": "^9.3",
         "laravel/tinker": "^2.0",
         "marvinlabs/laravel-luhn": "^1.0",
+        "rollbar/rollbar-laravel": "^6.0",
         "spatie/laravel-collection-macros": "^7.0",
         "spatie/laravel-query-builder": "^3.0"
     },
