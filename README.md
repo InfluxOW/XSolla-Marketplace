@@ -32,9 +32,10 @@ You can check PHP dependencies with the `composer check-platform-reqs` command.
 
 ## Buyer steps
 1. Register an account with "buyer' role.
-2. Select a game you want to buy a key for and a distributor. Purchase it.
+2. Select a game you want to buy a key for and a distributor. Send request to purchase endpoint, it'll make key reserved for you.
 3. You will receive your key after payment confirmation. To confirm it, send received token and your credit card number to the specified billing provider.
-4. If your data was correct then you'll receive an email with the key.
+4. If you won't confirm your purchase within 1 hour, key will become available for purchase to another users again.
+5. If your data was correct then you'll receive an email with the key.
 
 ## Additional information
 There's also separate requests to check available platforms and distributors for them.

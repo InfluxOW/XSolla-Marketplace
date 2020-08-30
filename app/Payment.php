@@ -10,9 +10,10 @@ use Illuminate\Support\Facades\Cache;
 class Payment extends Model
 {
     public $timestamps = false;
-    protected $fillable = ['confirmed_at', 'token'];
+    protected $fillable = ['confirmed_at', 'token', 'reserved_until'];
     protected $casts = [
         'confirmed_at' => 'datetime',
+        'reserved_until' => 'datetime',
     ];
     protected $hidden = ['token'];
 
@@ -35,6 +36,30 @@ class Payment extends Model
     public function payer()
     {
         return $this->belongsTo(User::class, 'payer_id');
+    }
+
+    /*
+     * Check reserve
+     * */
+
+    public function scopeReserved(Builder $query)
+    {
+        return $query->where('reserved_until', '>', now());
+    }
+
+    public function isReserved()
+    {
+        return $this->reserved_until > now();
+    }
+
+    public function scopeOutdated(Builder $query)
+    {
+        return $query->where('reserved_until', '<=', now());
+    }
+
+    public function isOutdated()
+    {
+        return $this->reserved_until <= now();
     }
 
     /*

@@ -9,6 +9,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Payment::class, function (Faker $faker) {
     return [
+        'reserved_until' => now()->addHour(),
         'confirmed_at' => $faker->dateTimeBetween('-3 months', 'now'),
         'token' => $faker->uuid
     ];

@@ -43,12 +43,12 @@ class PurchasesTest extends TestCase
     public function a_buyer_can_initialize_purchasing_a_key_for_the_specific_game_at_the_specific_distributor_and_it_makes_key_reserved()
     {
         $key = factory(Key::class)->state('test')->create();
-        $this->assertFalse($key->isReservedBy($this->buyer));
+        $this->assertFalse($key->isReserved());
 
         $this->actingAs($this->buyer, 'api')->post(
             route('purchases.store', ['game' => $key->game, 'distributor' => $key->distributor])
         );
-        $this->assertTrue($key->fresh()->isReservedBy($this->buyer));
+        $this->assertTrue($key->fresh()->isReserved());
     }
 
     /** @test */

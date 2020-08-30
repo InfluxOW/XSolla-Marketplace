@@ -9,6 +9,7 @@ use App\Key;
 use App\Platform;
 use App\Payment;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -55,17 +56,40 @@ class KeyTest extends TestCase
     }
 
     /** @test */
-    public function it_knows_if_it_has_been_reserved_by_the_specified_user()
+    public function it_knows_if_it_has_been_reserved()
     {
         $buyer = factory(User::class)->state('buyer')->create();
 
-        $this->assertFalse($this->key->isReservedBy($buyer));
+        $this->assertFalse($this->key->isReserved());
         $buyer->reserve($this->key);
-        $this->assertTrue($this->key->fresh()->isReservedBy($buyer));
+        $this->assertTrue($this->key->fresh()->isReserved());
     }
 
     /** @test */
-    public function once_a_key_has_confirmed_purchase_it_becomes_unavailable()
+    public function key_becomes_unavailable_when_user_reserves_it()
+    {
+        $buyer = factory(User::class)->state('buyer')->create();
+
+        $this->assertTrue($this->key->isAvailable());
+        $buyer->reserve($this->key);
+        $this->assertFalse($this->key->fresh()->isAvailable());
+    }
+
+    /** @test */
+    public function reserved_key_becomes_available_when_reservation_date_passes()
+    {
+        $buyer = factory(User::class)->state('buyer')->create();
+        $buyer->reserve($this->key);
+
+        $this->assertFalse($this->key->isAvailable());
+
+        Carbon::setTestNow(now()->addHour());
+
+        $this->assertTrue($this->key->isAvailable());
+    }
+
+    /** @test */
+    public function key_becomes_unavailable_when_user_confirms_its_purchase()
     {
         $this->assertTrue($this->key->isAvailable());
         $unconfirmedPurchase = factory(Payment::class)->state('test')->create(['key_id' => $this->key, 'confirmed_at' => null]);
@@ -78,13 +102,18 @@ class KeyTest extends TestCase
     public function it_can_be_scoped_to_only_available_keys()
     {
         $available = $this->key;
-        $unconfirmedPurchase = factory(Payment::class)->state('test')->create(['key_id' => $available, 'confirmed_at' => null]);
+        $unconfirmedOutdatedPurchase = factory(Payment::class)->state('test')->create([
+            'key_id' => $available, 'confirmed_at' => null, 'reserved_until' => now()->subDay()
+        ]);
 
         $unavailable = factory(Key::class)->state('test')->create();
         $confirmedPurchase = factory(Payment::class)->state('test')->create(['key_id' => $unavailable, 'confirmed_at' => now()]);
 
         $this->assertTrue(Key::available()->get()->contains($available->fresh()));
         $this->assertFalse(Key::available()->get()->contains($unavailable->fresh()));
+
+        $unconfirmedOutdatedPurchase->update(['reserved_until' => now()->addHour()]);
+        $this->assertEmpty(Key::available()->get());
     }
 
     /** @test */

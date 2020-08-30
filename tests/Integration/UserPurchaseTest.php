@@ -33,22 +33,6 @@ class UserPurchaseTest extends TestCase
     }
 
     /** @test */
-    public function user_can_reserve_a_key()
-    {
-        $this->assertFalse($this->key->isReservedBy($this->buyer));
-        $this->buyer->reserve($this->key);
-        $this->assertTrue($this->key->fresh()->isReservedBy($this->buyer));
-    }
-
-    /** @test */
-    public function key_keeps_being_available_when_user_reserves_it()
-    {
-        $this->assertTrue($this->key->isAvailable());
-        $this->buyer->reserve($this->key);
-        $this->assertTrue($this->key->isAvailable());
-    }
-
-    /** @test */
     public function reserved_key_becomes_unavailable_once_user_confirms_purchase()
     {
         $purchase = $this->buyer->reserve($this->key);

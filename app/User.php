@@ -87,10 +87,11 @@ class User extends Authenticatable
 
     public function reserve(Key $key)
     {
-        return tap($this->payments()->make(), function ($purchase) use ($key) {
-            $purchase->key()->associate($key);
-            $purchase->token = Billing::generatePaymentSessionToken($key, $this->email, $key->game->price);
-            $purchase->save();
+        return tap($this->payments()->make(), function ($payment) use ($key) {
+            $payment->key()->associate($key);
+            $payment->token = Billing::generatePaymentSessionToken($key, $this->email, $key->game->price);
+            $payment->reserved_until = now()->addHour();
+            $payment->save();
         });
     }
 }

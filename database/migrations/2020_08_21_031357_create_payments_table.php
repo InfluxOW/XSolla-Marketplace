@@ -18,6 +18,7 @@ class CreatePaymentsTable extends Migration
             $table->foreignId('payer_id')->index()->constrained('users')->cascadeOnDelete();
             $table->foreignId('key_id')->index()->constrained()->cascadeOnDelete();
             $table->string('token')->unique();
+            $table->timestamp('reserved_until');
             $table->timestamp('confirmed_at')->nullable();
         });
     }

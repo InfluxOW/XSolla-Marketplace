@@ -60,12 +60,12 @@ class Key extends Model
     }
 
     /*
-     * Check if user has reserved a key
+     * Check reserve
      * */
 
-    public function isReservedBy(User $user)
+    public function isReserved()
     {
-        return $this->payments->where('payer_id', $user->id)->filter->isUnconfirmed()->count() > 0;
+        return $this->payments->where('reserved_until', '>', now())->isNotEmpty();
     }
 
     /*
@@ -76,6 +76,8 @@ class Key extends Model
     {
         return $query->whereDoesntHave('payments', function (Builder $query) {
             return $query->confirmed();
+        })->whereDoesntHave('payments', function (Builder $query) {
+            return $query->reserved();
         });
     }
 
@@ -92,6 +94,6 @@ class Key extends Model
 
     public function isAvailable()
     {
-        return $this->payments->whereNotNull('confirmed_at')->isEmpty();
+        return $this->payments->filter->isConfirmed()->isEmpty() && ! $this->isReserved();
     }
 }
