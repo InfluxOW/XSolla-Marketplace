@@ -1,12 +1,12 @@
 @component('mail::message')
     # You have a new key!
 
-    Hi {{ $purchase->payer->name }}!
+    Hi, {{ $purchase->payer->name }}!
 
-    You have new key purchased... Here it is!
+    You have new game {{ $purchase->key->game->name }} in your {{ $purchase->key->distributor->name }} library... Here is your key!
 
     {{ $purchase->key->serial_number }}
 
-    Enjoy the new game,
+    Enjoy it,
     {{ config('app.name') }}
 @endcomponent
