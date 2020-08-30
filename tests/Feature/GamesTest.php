@@ -59,7 +59,7 @@ class GamesTest extends TestCase
 
         $keysAtSteam = factory(Key::class, 3)->state('test')->create(['game_id' => $game, 'distributor_id' => $steam]);
         $keysAtGog = factory(Key::class, 2)->state('test')->create(['game_id' => $game, 'distributor_id' => $gog]);
-        $purchase = factory(Payment::class)->state('test')->create(['key_id' => $keysAtSteam->first()]);
+        $payment = factory(Payment::class)->state('test')->create(['key_id' => $keysAtSteam->first()]);
 
         $game = $this->get(route('games.show', ['game' => $game]))
             ->assertOk()

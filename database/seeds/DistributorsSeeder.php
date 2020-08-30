@@ -24,10 +24,10 @@ class DistributorsSeeder extends Seeder
     public function run()
     {
         foreach ($this->distributors as $platform => $distributors) {
-            $platform = factory(Platform::class)->create(['name' => $platform]);
+            $platform = Platform::create(['name' => $platform]);
 
             foreach ($distributors as $distributor) {
-                factory(Distributor::class)->create(['name' => $distributor, 'platform_id' => $platform]);
+                Distributor::create(['name' => $distributor, 'platform_id' => $platform->id]);
             }
         }
     }

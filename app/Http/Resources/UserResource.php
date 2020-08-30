@@ -31,7 +31,7 @@ class UserResource extends JsonResource
             'balance' => $this->when($this->resource->isSeller(), $this->balance),
             'keys_on_sale' => $this->when($this->resource->isSeller(), $this->keys->count()),
             'keys_sold' => $this->when($this->resource->isSeller(), $this->sales->count()),
-            'keys_purchased' => $this->when($this->resource->isBuyer(), $this->purchases->count()),
+            'keys_purchased' => $this->when($this->resource->isBuyer(), $this->payments->count()),
         ];
     }
 }
