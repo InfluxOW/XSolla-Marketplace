@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 use App\Key;
-use App\Purchase;
+use App\Payment;
 use App\User;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
@@ -17,7 +17,7 @@ class PurchaseTest extends TestCase
     {
         parent::setUp();
 
-        $this->purchase = factory(Purchase::class)->state('test')->create();
+        $this->purchase = factory(Payment::class)->state('test')->create();
     }
 
     /** @test */
@@ -29,13 +29,7 @@ class PurchaseTest extends TestCase
     /** @test */
     public function it_belongs_to_a_buyer()
     {
-        $this->assertInstanceOf(User::class, $this->purchase->buyer);
-    }
-
-    /** @test */
-    public function it_has_a_seller()
-    {
-        $this->assertInstanceOf(User::class, $this->purchase->seller);
+        $this->assertInstanceOf(User::class, $this->purchase->payer);
     }
 
     /** @test */
@@ -58,11 +52,11 @@ class PurchaseTest extends TestCase
     public function it_can_be_scoped_to_only_confirmed_purchases()
     {
         $confirmed = $this->purchase;
-        $unconfirmed = factory(Purchase::class)->state('test')->create(['confirmed_at' => null]);
+        $unconfirmed = factory(Payment::class)->state('test')->create(['confirmed_at' => null]);
 
-        $this->assertTrue(Purchase::confirmed()->get()->contains($confirmed));
-        $this->assertFalse(Purchase::confirmed()->get()->contains($unconfirmed));
-        $this->assertTrue(Purchase::unconfirmed()->get()->contains($unconfirmed));
-        $this->assertFalse(Purchase::unconfirmed()->get()->contains($confirmed));
+        $this->assertTrue(Payment::confirmed()->get()->contains($confirmed));
+        $this->assertFalse(Payment::confirmed()->get()->contains($unconfirmed));
+        $this->assertTrue(Payment::unconfirmed()->get()->contains($unconfirmed));
+        $this->assertFalse(Payment::unconfirmed()->get()->contains($confirmed));
     }
 }

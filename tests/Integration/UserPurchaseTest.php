@@ -2,13 +2,13 @@
 
 namespace Tests\Integration;
 
-use App\Events\PurchaseConfirmed;
+use App\Events\PaymentConfirmed;
 use App\Jobs\NotifySellerAboutSoldKey;
 use App\Jobs\SendMail;
 use App\Key;
 use App\Listeners\PurchaseConfirmed\IncreaseSellerBalance;
 use App\Listeners\PurchaseConfirmed\SendNotifications;
-use App\Mail\SendKeyToTheBuyer;
+use App\Mail\SendKeyToThePayer;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -67,14 +67,14 @@ class UserPurchaseTest extends TestCase
 
         $purchase->confirm();
 
-        Event::assertDispatched(PurchaseConfirmed::class);
+        Event::assertDispatched(PaymentConfirmed::class);
     }
 
     /** @test */
     public function purchase_confirmation_triggers_increase_seller_balance_listener()
     {
         $purchase = $this->buyer->reserve($this->key);
-        Event::fake(PurchaseConfirmed::class);
+        Event::fake(PaymentConfirmed::class);
 
         $purchase->confirm();
 
@@ -100,7 +100,7 @@ class UserPurchaseTest extends TestCase
     public function purchase_confirmation_triggers_send_notifications_listener()
     {
         $purchase = $this->buyer->reserve($this->key);
-        Event::fake(PurchaseConfirmed::class);
+        Event::fake(PaymentConfirmed::class);
 
         $purchase->confirm();
 
@@ -123,7 +123,7 @@ class UserPurchaseTest extends TestCase
     }
 
     /** @test */
-    public function notify_seller_about_sold_key_job_sends_http_request_to_seller_server()
+    public function notify_seller_about_sold_key_job_sends_http_request_to_the_seller_server()
     {
         $purchase = $this->buyer->reserve($this->key);
 
@@ -137,7 +137,7 @@ class UserPurchaseTest extends TestCase
     }
 
     /** @test */
-    public function send_notifications_listener_dispatches_send_mail_job_with_purchase_buyer_and_send_key_to_the_buyer_mailable()
+    public function send_notifications_listener_dispatches_send_mail_job_with_purchase_buyer_and_send_key_to_the_payer_mailable()
     {
         $event = $this->mockPurchaseConfirmedEvent();
         $listener = app()->make(SendNotifications::class);
@@ -147,14 +147,14 @@ class UserPurchaseTest extends TestCase
 
         $listener->handle($event);
 
-        Mail::assertSent(SendKeyToTheBuyer::class);
+        Mail::assertSent(SendKeyToThePayer::class);
     }
 
     protected function mockPurchaseConfirmedEvent()
     {
         $purchase = $this->buyer->reserve($this->key);
 
-        $event = \Mockery::mock(PurchaseConfirmed::class);
+        $event = \Mockery::mock(PaymentConfirmed::class);
         $event->purchase = $purchase;
 
         return $event;

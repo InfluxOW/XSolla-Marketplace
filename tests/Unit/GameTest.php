@@ -8,7 +8,7 @@ use App\Distributor;
 use App\Game;
 use App\Key;
 use App\Platform;
-use App\Purchase;
+use App\Payment;
 use App\User;
 use Tests\TestCase;
 
@@ -52,9 +52,9 @@ class GameTest extends TestCase
     public function it_has_sales_through_its_keys()
     {
         $key = factory(Key::class)->state('test')->create(['game_id' => $this->game]);
-        $purchase = factory(Purchase::class)->state('test')->create(['key_id' => $key]);
+        $purchase = factory(Payment::class)->state('test')->create(['key_id' => $key]);
 
-        $this->assertInstanceOf(Purchase::class, $this->game->sales->first());
+        $this->assertInstanceOf(Payment::class, $this->game->sales->first());
         $this->assertTrue($this->game->sales->contains($purchase));
     }
 
@@ -66,7 +66,7 @@ class GameTest extends TestCase
 
         $unavailableGame = factory(Game::class)->state('test')->create();
         $unavailableKey = factory(Key::class)->state('test')->create(['game_id' => $unavailableGame]);
-        $purchase = factory(Purchase::class)->state('test')->create(['key_id' => $unavailableKey]);
+        $purchase = factory(Payment::class)->state('test')->create(['key_id' => $unavailableKey]);
 
         $this->assertTrue(Game::available()->get()->contains($availableGame));
         $this->assertFalse(Game::available()->get()->contains($unavailableGame));
@@ -82,7 +82,7 @@ class GameTest extends TestCase
         $unavailableGame = factory(Game::class)->state('test')->create();
         $unavailableDistributor = factory(Distributor::class)->state('test')->create();
         $unavailableKey = factory(Key::class)->state('test')->create(['game_id' => $unavailableGame, 'distributor_id' => $unavailableDistributor]);
-        $purchase = factory(Purchase::class)->state('test')->create(['key_id' => $unavailableKey]);
+        $purchase = factory(Payment::class)->state('test')->create(['key_id' => $unavailableKey]);
 
         $this->assertTrue(Game::availableAtDistributor($availableDistributor->slug)->get()->contains($availableGame));
         $this->assertFalse(Game::availableAtDistributor($unavailableDistributor->slug)->get()->contains($unavailableGame));
@@ -105,7 +105,7 @@ class GameTest extends TestCase
         $availableKey = factory(Key::class)->state('test')->create(['game_id' => $this->game, 'distributor_id' => $distributor]);
 
         $unavailableKey = factory(Key::class)->state('test')->create(['game_id' => $this->game, 'distributor_id' => $distributor]);
-        $purchase = factory(Purchase::class)->state('test')->create(['key_id' => $unavailableKey]);
+        $purchase = factory(Payment::class)->state('test')->create(['key_id' => $unavailableKey]);
 
         $this->assertTrue($this->game->getFirstAvailableKeyAtDistributor($distributor->slug)->is($availableKey));
     }

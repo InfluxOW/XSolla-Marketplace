@@ -3,7 +3,7 @@
 use App\Key;
 use Illuminate\Database\Seeder;
 
-class KeySeeder extends Seeder
+class KeysSeeder extends Seeder
 {
     /**
      * Run the database seeds.

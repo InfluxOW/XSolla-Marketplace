@@ -5,9 +5,9 @@ namespace Tests\Feature;
 use App\Distributor;
 use App\Game;
 use App\Key;
-use App\Purchase;
+use App\Payment;
 use App\User;
-use DistributorSeeder;
+use DistributorsSeeder;
 use Tests\TestCase;
 
 class GamesQueriesTest extends TestCase
@@ -139,7 +139,7 @@ class GamesQueriesTest extends TestCase
          * */
 
         $this->seed([
-            DistributorSeeder::class,
+            DistributorsSeeder::class,
         ]);
 
         /*
@@ -168,12 +168,12 @@ class GamesQueriesTest extends TestCase
         factory(Key::class, 1)->create(['owner_id' => $seller, 'game_id' => $mario, 'distributor_id' => 7]);
 
         /*
-         * Purchases
+         * Payments
          * */
-        factory(Purchase::class)->create(['buyer_id' => $buyer, 'key_id' => 1]);
-        factory(Purchase::class)->create(['buyer_id' => $buyer, 'key_id' => 8]);
-        factory(Purchase::class)->create(['buyer_id' => $buyer, 'key_id' => 11]);
-        factory(Purchase::class)->create(['buyer_id' => $buyer, 'key_id' => 15]);
-        factory(Purchase::class)->create(['buyer_id' => $buyer, 'key_id' => 18]);
+        factory(Payment::class)->create(['payer_id' => $buyer, 'key_id' => 1]);
+        factory(Payment::class)->create(['payer_id' => $buyer, 'key_id' => 8]);
+        factory(Payment::class)->create(['payer_id' => $buyer, 'key_id' => 11]);
+        factory(Payment::class)->create(['payer_id' => $buyer, 'key_id' => 15]);
+        factory(Payment::class)->create(['payer_id' => $buyer, 'key_id' => 18]);
     }
 }

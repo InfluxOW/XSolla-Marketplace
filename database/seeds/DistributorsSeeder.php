@@ -4,7 +4,7 @@ use App\Distributor;
 use App\Platform;
 use Illuminate\Database\Seeder;
 
-class DistributorSeeder extends Seeder
+class DistributorsSeeder extends Seeder
 {
     protected $distributors = [
         'PlayStation 4' => [

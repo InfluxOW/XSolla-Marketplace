@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Purchase;
+use App\Payment;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -21,9 +21,9 @@ class NotifySellerAboutSoldKey implements ShouldQueue
 
     public $tries = 3;
     public $timeout = 10;
-    public Purchase $purchase;
+    public Payment $purchase;
 
-    public function __construct(Purchase $purchase)
+    public function __construct(Payment $purchase)
     {
         $this->purchase = $purchase;
     }
@@ -34,8 +34,8 @@ class NotifySellerAboutSoldKey implements ShouldQueue
             'message' => 'Your key has been bought!',
             'key' => $this->purchase->key->serial_number,
             'buyer' => [
-                'name' => $this->purchase->buyer->name,
-                'email' => $this->purchase->buyer->email
+                'name' => $this->purchase->payer->name,
+                'email' => $this->purchase->payer->email
             ],
             'commission' => config('app.marketplace.commission') * $this->purchase->key->game->price,
             'verifier' => bcrypt("{$this->purchase->key->serial_number}/{$this->purchase->confirmed_at}"),
@@ -50,6 +50,6 @@ class NotifySellerAboutSoldKey implements ShouldQueue
             throw new HttpException(503, 'User server responded with an error.');
         }
 
-        Log::info("Purchase {$this->purchase->id} has been proceeded.");
+        Log::info("Payment {$this->purchase->id} has been proceeded.");
     }
 }

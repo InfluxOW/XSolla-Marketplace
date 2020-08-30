@@ -14,16 +14,16 @@ class DatabaseSeeder extends Seeder
         switch (app('env')) {
             case 'production':
                 $this->call([
-                    DistributorSeeder::class,
+                    DistributorsSeeder::class,
                 ]);
                 break;
             default:
                 $this->call([
-                    UserSeeder::class,
-                    DistributorSeeder::class,
-                    GameSeeder::class,
-                    KeySeeder::class,
-                    PurchaseSeeder::class,
+                    UsersSeeder::class,
+                    DistributorsSeeder::class,
+                    GamesSeeder::class,
+                    KeysSeeder::class,
+                    PaymentsSeeder::class,
                 ]);
                 break;
         }

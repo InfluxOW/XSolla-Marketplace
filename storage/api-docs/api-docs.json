@@ -257,11 +257,11 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "payment_session_token",
+                                    "token",
                                     "card"
                                 ],
                                 "properties": {
-                                    "payment_session_token": {
+                                    "token": {
                                         "type": "string",
                                         "example": "$2y$04$1rS6a2vh9ePY.mjg0I1gTeCskbl/jTy65DOTDDY/P6n4yvL3J4LcK"
                                     },
@@ -662,7 +662,7 @@
                                             "type": "string",
                                             "example": "You have successfully reserved a key for the game 'The Witcher 3: Wild Hunt' at Steam. To initialize payment send HTTP POST request with your card credentials and payment session token to the billing provider."
                                         },
-                                        "payment_session_token": {
+                                        "token": {
                                             "type": "string",
                                             "example": "$2y$04$1rS6a2vh9ePY.mjg0I1gTeCskbl/jTy65DOTDDY/P6n4yvL3J4LcK"
                                         }

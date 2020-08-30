@@ -5,7 +5,6 @@ namespace App;
 use App\Http\Requests\SalesRequest;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class Key extends Model
@@ -38,9 +37,9 @@ class Key extends Model
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    public function purchases()
+    public function payments()
     {
-        return $this->hasMany(Purchase::class);
+        return $this->hasMany(Payment::class);
     }
 
     /*
@@ -66,7 +65,7 @@ class Key extends Model
 
     public function isReservedBy(User $user)
     {
-        return $this->purchases->filter->isUnconfirmed()->where('buyer_id', $user->id)->count() > 0;
+        return $this->payments->where('payer_id', $user->id)->filter->isUnconfirmed()->count() > 0;
     }
 
     /*
@@ -75,7 +74,7 @@ class Key extends Model
 
     public function scopeAvailable(Builder $query)
     {
-        return $query->whereDoesntHave('purchases', function (Builder $query) {
+        return $query->whereDoesntHave('payments', function (Builder $query) {
             return $query->confirmed();
         });
     }
@@ -93,6 +92,6 @@ class Key extends Model
 
     public function isAvailable()
     {
-        return is_null($this->purchases->whereNotNull('confirmed_at')->first());
+        return $this->payments->whereNotNull('confirmed_at')->isEmpty();
     }
 }

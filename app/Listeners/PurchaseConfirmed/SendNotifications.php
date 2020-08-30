@@ -2,18 +2,18 @@
 
 namespace App\Listeners\PurchaseConfirmed;
 
-use App\Events\PurchaseConfirmed;
+use App\Events\PaymentConfirmed;
 use App\Jobs\NotifySellerAboutSoldKey;
 use App\Jobs\SendMail;
-use App\Mail\SendKeyToTheBuyer;
+use App\Mail\SendKeyToThePayer;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
 class SendNotifications
 {
-    public function handle(PurchaseConfirmed $event)
+    public function handle(PaymentConfirmed $event)
     {
         NotifySellerAboutSoldKey::dispatch($event->purchase)->onQueue('notifications');
-        SendMail::dispatch($event->purchase->buyer, new SendKeyToTheBuyer($event->purchase))->onQueue('mails');
+        SendMail::dispatch($event->purchase->payer, new SendKeyToThePayer($event->purchase))->onQueue('mails');
     }
 }

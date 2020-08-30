@@ -7,7 +7,7 @@ use App\Game;
 use App\Http\Requests\SalesRequest;
 use App\Key;
 use App\Platform;
-use App\Purchase;
+use App\Payment;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -45,13 +45,13 @@ class KeyTest extends TestCase
     /** @test */
     public function it_may_have_purchases()
     {
-        $purchases = factory(Purchase::class, 2)->state('test')->create(['key_id' => $this->key, 'confirmed_at' => null]);
+        $purchases = factory(Payment::class, 2)->state('test')->create(['key_id' => $this->key, 'confirmed_at' => null]);
 
         $this->assertTrue(
-            $this->key->purchases->contains($purchases->first() ||
-            $this->key->purchases->contains($purchases->second()))
+            $this->key->payments->contains($purchases->first() ||
+            $this->key->payments->contains($purchases->second()))
         );
-        $this->assertInstanceOf(Purchase::class, $this->key->purchases->first());
+        $this->assertInstanceOf(Payment::class, $this->key->payments->first());
     }
 
     /** @test */
@@ -68,9 +68,9 @@ class KeyTest extends TestCase
     public function once_a_key_has_confirmed_purchase_it_becomes_unavailable()
     {
         $this->assertTrue($this->key->isAvailable());
-        $unconfirmedPurchase = factory(Purchase::class)->state('test')->create(['key_id' => $this->key, 'confirmed_at' => null]);
+        $unconfirmedPurchase = factory(Payment::class)->state('test')->create(['key_id' => $this->key, 'confirmed_at' => null]);
         $this->assertTrue($this->key->isAvailable());
-        $confirmedPurchase = factory(Purchase::class)->state('test')->create(['key_id' => $this->key, 'confirmed_at' => now()]);
+        $confirmedPurchase = factory(Payment::class)->state('test')->create(['key_id' => $this->key, 'confirmed_at' => now()]);
         $this->assertFalse($this->key->fresh()->isAvailable());
     }
 
@@ -78,10 +78,10 @@ class KeyTest extends TestCase
     public function it_can_be_scoped_to_only_available_keys()
     {
         $available = $this->key;
-        $unconfirmedPurchase = factory(Purchase::class)->state('test')->create(['key_id' => $available, 'confirmed_at' => null]);
+        $unconfirmedPurchase = factory(Payment::class)->state('test')->create(['key_id' => $available, 'confirmed_at' => null]);
 
         $unavailable = factory(Key::class)->state('test')->create();
-        $confirmedPurchase = factory(Purchase::class)->state('test')->create(['key_id' => $unavailable, 'confirmed_at' => now()]);
+        $confirmedPurchase = factory(Payment::class)->state('test')->create(['key_id' => $unavailable, 'confirmed_at' => now()]);
 
         $this->assertTrue(Key::available()->get()->contains($available->fresh()));
         $this->assertFalse(Key::available()->get()->contains($unavailable->fresh()));

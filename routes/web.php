@@ -1,8 +1,8 @@
 <?php
 
-use App\Mail\SendKeyToTheBuyer;
+use App\Mail\SendKeyToThePayer;
 use App\Providers\RouteServiceProvider;
-use App\Purchase;
+use App\Payment;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,5 +21,5 @@ Route::get('/', function () {
 });
 
 Route::get('mailable', function () {
-    return new SendKeyToTheBuyer(Purchase::find(1));
+    return new SendKeyToThePayer(Payment::find(1));
 });

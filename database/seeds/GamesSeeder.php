@@ -3,7 +3,7 @@
 use App\Game;
 use Illuminate\Database\Seeder;
 
-class GameSeeder extends Seeder
+class GamesSeeder extends Seeder
 {
     /**
      * Run the database seeds.

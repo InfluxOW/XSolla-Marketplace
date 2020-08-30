@@ -54,7 +54,7 @@ class LoginController extends Controller
 
         return response([
             'user' => new UserResource(
-                Auth::user()->load('keys', 'sales', 'purchases')
+                Auth::user()->load('keys', 'sales', 'payments')
             ),
             'access_token' => $accessToken
         ], 200);

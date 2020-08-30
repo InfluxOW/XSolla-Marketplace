@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\Distributor;
 use App\Game;
 use App\Key;
-use App\Purchase;
+use App\Payment;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -55,10 +55,10 @@ class PurchasesTest extends TestCase
     public function a_user_can_confirm_initialized_purchase_which_makes_key_unavailable_for_next_purchase()
     {
         $key = factory(Key::class)->state('test')->create();
-        $purchase = factory(Purchase::class)->state('test')->create(['key_id' => $key, 'confirmed_at' => null]);
+        $purchase = factory(Payment::class)->state('test')->create(['key_id' => $key, 'confirmed_at' => null]);
+        $attributes = ['card' => 4242424242424242, 'token' => $purchase->token];
 
-        $attributes = ['card' => 4242424242424242, 'payment_session_token' => $purchase->payment_session_token];
-        $this->actingAs($purchase->buyer, 'api')->post(route('payments.confirm'), $attributes);
+        $this->actingAs($purchase->payer, 'api')->post(route('payments.confirm'), $attributes);
         $this->assertFalse($key->isAvailable());
     }
 }

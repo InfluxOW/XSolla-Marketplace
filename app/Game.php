@@ -43,12 +43,12 @@ class Game extends Model
 
     public function distributors()
     {
-        return $this->hasManyThrough(Distributor::class, Key::class, 'game_id', 'id', null, 'distributor_id')->distinct('name');
+        return $this->hasManyThrough(Distributor::class, Key::class, 'game_id', 'id', 'id', 'distributor_id')->distinct('name');
     }
 
     public function sales()
     {
-        return $this->hasManyThrough(Purchase::class, Key::class);
+        return $this->hasManyThrough(Payment::class, Key::class)->whereNotNull('confirmed_at');
     }
 
     /*

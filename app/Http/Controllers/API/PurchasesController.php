@@ -17,8 +17,8 @@ class PurchasesController extends Controller
     /**
      * @OA\Post(
      * path="/games/{game:slug}/{distributor:slug}/purchase",
-     * summary="Purchase a key",
-     * description="Purchase a key for the specific game at the specific distributor",
+     * summary="Payment a key",
+     * description="Payment a key for the specific game at the specific distributor",
      * operationId="purchaseStore",
      * tags={"Purchases"},
      * security={
@@ -45,7 +45,7 @@ class PurchasesController extends Controller
      *    description="Keys has been reserved",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="You have successfully reserved a key for the game 'The Witcher 3: Wild Hunt' at Steam. To initialize payment send HTTP POST request with your card credentials and payment session token to the billing provider."),
-     *       @OA\Property(property="payment_session_token", type="string", example="$2y$04$1rS6a2vh9ePY.mjg0I1gTeCskbl/jTy65DOTDDY/P6n4yvL3J4LcK"),
+     *       @OA\Property(property="token", type="string", example="$2y$04$1rS6a2vh9ePY.mjg0I1gTeCskbl/jTy65DOTDDY/P6n4yvL3J4LcK"),
      * )
      *  ),
      * @OA\Response(
@@ -78,16 +78,16 @@ class PurchasesController extends Controller
     {
         try {
             $key = $game->getFirstAvailableKeyAtDistributor($distributor);
-        } catch (NoAvailableKeysException $e) {
+        } catch (\Exception $e) {
             return response($e->getMessage(), 422);
         }
 
-        $purchase = $request->user()->reserve($key);
+        $payment = $request->user()->reserve($key);
 
         return response(
             [
-                'message' => "You have successfully reserved a key for the game '{$game->name}' at {$purchase->key->distributor->name}. To initialize payment send HTTP POST request with your card credentials and payment session token to the billing provider.",
-                'payment_session_token' => $purchase['payment_session_token']
+                'message' => "You have successfully reserved a key for the game '{$game->name}' at {$payment->key->distributor->name}. To initialize payment send HTTP POST request with your card credentials and payment session token to the billing provider.",
+                'token' => $payment['token']
             ],
             201
         );

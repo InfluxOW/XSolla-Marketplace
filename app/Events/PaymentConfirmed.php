@@ -2,18 +2,18 @@
 
 namespace App\Events;
 
-use App\Purchase;
+use App\Payment;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class PurchaseConfirmed
+class PaymentConfirmed
 {
     use Dispatchable;
     use SerializesModels;
 
-    public Purchase $purchase;
+    public Payment $purchase;
 
-    public function __construct(Purchase $purchase)
+    public function __construct(Payment $purchase)
     {
         $this->purchase = $purchase;
     }

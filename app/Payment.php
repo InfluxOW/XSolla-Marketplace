@@ -2,19 +2,19 @@
 
 namespace App;
 
-use App\Events\PurchaseConfirmed;
+use App\Events\PaymentConfirmed;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
-class Purchase extends Model
+class Payment extends Model
 {
     public $timestamps = false;
-    protected $fillable = ['confirmed_at', 'payment_session_token'];
+    protected $fillable = ['confirmed_at', 'token'];
     protected $casts = [
         'confirmed_at' => 'datetime',
     ];
-    protected $hidden = ['payment_session_token'];
+    protected $hidden = ['token'];
 
     protected static function booted()
     {
@@ -32,14 +32,9 @@ class Purchase extends Model
         return $this->belongsTo(Key::class);
     }
 
-    public function buyer()
+    public function payer()
     {
-        return $this->belongsTo(User::class, 'buyer_id');
-    }
-
-    public function seller()
-    {
-        return $this->key->owner();
+        return $this->belongsTo(User::class, 'payer_id');
     }
 
     /*
@@ -50,7 +45,7 @@ class Purchase extends Model
     {
         $this->update(['confirmed_at' => now()]);
 
-        PurchaseConfirmed::dispatch($this);
+        PaymentConfirmed::dispatch($this);
     }
 
     /*

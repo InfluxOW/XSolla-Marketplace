@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Events\PurchaseConfirmed;
+use App\Events\PaymentConfirmed;
 use App\Helpers\Billing;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
@@ -63,7 +63,7 @@ class User extends Authenticatable
 
     public function sales()
     {
-        return $this->hasManyThrough(Purchase::class, Key::class, 'owner_id');
+        return $this->hasManyThrough(Payment::class, Key::class, 'owner_id');
     }
 
     /*
@@ -80,16 +80,16 @@ class User extends Authenticatable
         $query->where('role', 'buyer');
     }
 
-    public function purchases()
+    public function payments()
     {
-        return $this->hasMany(Purchase::class, 'buyer_id');
+        return $this->hasMany(Payment::class, 'payer_id');
     }
 
     public function reserve(Key $key)
     {
-        return tap($this->purchases()->make(), function ($purchase) use ($key) {
+        return tap($this->payments()->make(), function ($purchase) use ($key) {
             $purchase->key()->associate($key);
-            $purchase->payment_session_token = Billing::generatePaymentSessionToken($key, $this->email, $key->game->price);
+            $purchase->token = Billing::generatePaymentSessionToken($key, $this->email, $key->game->price);
             $purchase->save();
         });
     }

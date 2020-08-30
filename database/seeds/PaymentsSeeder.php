@@ -2,10 +2,10 @@
 
 /** @noinspection StaticInvocationViaThisInspection */
 
-use App\Purchase;
+use App\Payment;
 use Illuminate\Database\Seeder;
 
-class PurchaseSeeder extends Seeder
+class PaymentsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,6 +14,6 @@ class PurchaseSeeder extends Seeder
      */
     public function run()
     {
-        factory(Purchase::class, 30)->create();
+        factory(Payment::class, 30)->create();
     }
 }

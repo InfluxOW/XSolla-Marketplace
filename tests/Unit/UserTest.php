@@ -2,9 +2,9 @@
 
 namespace Tests\Unit;
 
-use App\Events\PurchaseConfirmed;
+use App\Events\PaymentConfirmed;
 use App\Key;
-use App\Purchase;
+use App\Payment;
 use App\User;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -43,12 +43,12 @@ class UserTest extends TestCase
     }
 
     /** @test */
-    public function it_has_purchases()
+    public function it_has_payments()
     {
-        $purchase = factory(Purchase::class)->state('test')->create(['buyer_id' => $this->buyer]);
+        $purchase = factory(Payment::class)->state('test')->create(['payer_id' => $this->buyer]);
 
-        $this->assertInstanceOf(Purchase::class, $this->buyer->purchases->first());
-        $this->assertTrue($this->buyer->purchases->contains($purchase));
+        $this->assertInstanceOf(Payment::class, $this->buyer->payments->first());
+        $this->assertTrue($this->buyer->payments->contains($purchase));
     }
 
     /** @test */
@@ -64,9 +64,9 @@ class UserTest extends TestCase
     public function it_has_sales_through_its_keys()
     {
         $key = factory(Key::class)->state('test')->create(['owner_id' => $this->seller]);
-        $sale = factory(Purchase::class)->state('test')->create(['buyer_id' => $this->buyer, 'key_id' => $key]);
+        $sale = factory(Payment::class)->state('test')->create(['payer_id' => $this->buyer, 'key_id' => $key]);
 
-        $this->assertInstanceOf(Purchase::class, $this->seller->sales->first());
+        $this->assertInstanceOf(Payment::class, $this->seller->sales->first());
         $this->assertTrue($this->seller->sales->contains($sale));
     }
 }

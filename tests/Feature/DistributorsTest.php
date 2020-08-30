@@ -8,7 +8,7 @@ use App\Distributor;
 use App\Game;
 use App\Key;
 use App\Platform;
-use App\Purchase;
+use App\Payment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Arr;
@@ -46,7 +46,7 @@ class DistributorsTest extends TestCase
         $csgo = factory(Key::class)->state('test')->create(['distributor_id' => $steam, 'game_id' => $pcGame]);
         $horizon = factory(Key::class)->state('test')->create(['distributor_id' => $psStore, 'game_id' => $ps4Games->first()]);
         $godOfWar = factory(Key::class)->state('test')->create(['distributor_id' => $psStore, 'game_id' => $ps4Games->second()]);
-        $purchase = factory(Purchase::class)->state('test')->create(['key_id' => $horizon]);
+        $purchase = factory(Payment::class)->state('test')->create(['key_id' => $horizon]);
 
         $distributors = $this->get(route('distributors.index'))
             ->assertOk()
