@@ -4,6 +4,8 @@
 
 ## Xsolla Marketplace
 This is a final project of Xsolla Summer 2020 Backend School.\
+Task: https://github.com/p-sanachev/summer-school-be-2020-final
+
 http://influx-marketplace.herokuapp.com
 
 ## Requirements
